@@ -233,29 +233,10 @@ app.get("/profile", authenticateToken, (req, res) => {
   });
 });
 
-
-app.post("/search-store", (req, res) => {
-  let store_name = req.body.store_name;
-  console.log(store_name);
-  db.query(
-    `SELECT * FROM store where store_name="${store_name}"`,
-    (err, result) => {
-      if (result) {
-        console.log(result);
-        res.send(result);
-        // console.log(result[0]);
-      } else {
-        // console.log(err);
-        res.send(err.data);
-      }
-    }
-  );
-});
-
 app.get("/store", (req, res) => {
   db.query(`SELECT * FROM store`, (err, result) => {
     if (result) {
-      console.log(result);
+      // console.log(result);
       res.send(result);
       // console.log(result[0]);
     } else {
