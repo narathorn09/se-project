@@ -8,6 +8,14 @@ import Stack from "@mui/material/Stack";
 import Fuse from "fuse.js";
 import { IconButton, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import Checkbox from "@mui/material/Checkbox";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
 
 export default function HomeCust() {
   const [search, sestSearch] = useState("");
@@ -15,6 +23,28 @@ export default function HomeCust() {
   const [showalldata, setNonshowalldata] = useState(true);
   const [alldata, setAlldata] = useState([]);
   const [nondataSearch, setNondataSearch] = useState(false);
+
+  const [Selectfilter, setSelectfilter] = useState("");
+
+  const whenSelectfilter = (e) => {
+    setSelectfilter(e.target.value);
+  };
+  // console.log(Selectfilter);
+
+  const optionFillter = {
+    useExtendedSearch: true,
+    includeScore: true,
+    keys: ["store_name", "store_religion"],
+  };
+
+  const fuseFillter = new Fuse(alldata, optionFillter);
+
+  useEffect(() => {
+    const resultFillter = fuseFillter.search({
+      $and: [{ store_name: search }, { store_religion: Selectfilter }],
+    });
+    console.log(resultFillter);
+  }, [search, Selectfilter]);
 
   const options = {
     keys: ["store_name"],
@@ -24,7 +54,7 @@ export default function HomeCust() {
   useEffect(() => {
     const result = fuse.search(search);
     setdataSearch(result);
-    console.log(result);
+    // console.log(result);
 
     if (dataSearch.length > 0) {
       setNondataSearch(false);
@@ -35,7 +65,6 @@ export default function HomeCust() {
     }
 
     if (search.length > 0) {
-      console.log("test");
       setNondataSearch(false);
     } else {
       setNondataSearch(true);
@@ -44,13 +73,22 @@ export default function HomeCust() {
     if (showalldata) {
       setNondataSearch(false);
     }
-  }, [search]);
+  }, [search, Selectfilter]);
 
   useEffect(() => {
     axios.get("http://localhost:4000/store").then((response) => {
       setAlldata(response.data);
     });
-  }, []);
+    if (Selectfilter != "all" && Selectfilter != "") {
+      axios
+        .post("http://localhost:4000/store-filter1", {
+          Selectfilter,
+        })
+        .then((response) => {
+          setAlldata(response.data);
+        });
+    }
+  }, [search]);
 
   const Search = (e) => {
     sestSearch(e.target.value);
@@ -73,16 +111,34 @@ export default function HomeCust() {
           autoFocus
           value={search}
           onChange={(e) => Search(e)}
-          // InputProps={{
-          //   endAdornment: (
-          //     <InputAdornment position="end">
-          //       <IconButton onClick={Search}>
-          //         <SearchIcon />
-          //       </IconButton>
-          //     </InputAdornment>
-          //   ),
-          // }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={Search}>
+                  <SearchIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
+        <Box sx={{ minWidth: 120, marginTop: 3 }}>
+          <FormControl>
+            <InputLabel id="Select" size="23px">
+              ตัวกรอง
+            </InputLabel>
+            <Select
+              labelId="Select"
+              id="Select"
+              value={Selectfilter}
+              label="Select"
+              onChange={whenSelectfilter}
+            >
+              <MenuItem value={"all"}>ทั้งหมด</MenuItem>
+              <MenuItem value={"0"}>ศาสนาพุทธ</MenuItem>
+              <MenuItem value={"1"}>ศาสนาอิสลาม</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
         <Stack spacing={2} sx={{ marginTop: 2 }}>
           {dataSearch.map((data, index) => {
             return (

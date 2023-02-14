@@ -246,6 +246,19 @@ app.get("/store", (req, res) => {
   });
 });
 
+app.post("/store-filter1", (req, res) => {
+  let type = req.body.type;
+  db.query(`SELECT * FROM store Where store_religion='${type}'`, (err, result) => {
+    if (result) {
+      // console.log(result);
+      res.send(result);
+      // console.log(result[0]);
+    } else {
+      // console.log(err);
+      res.send(err.data);
+    }
+  });
+});
 
 app.listen(port, () => {
   console.log("CORS-enabled web server listening on port 4000");
