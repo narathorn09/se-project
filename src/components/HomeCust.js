@@ -6,95 +6,113 @@ import axios from "axios";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Fuse from "fuse.js";
-import { IconButton, InputAdornment } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
 import Checkbox from "@mui/material/Checkbox";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
 
 export default function HomeCust() {
   const [search, sestSearch] = useState("");
-  const [dataSearch, setdataSearch] = useState([]);
-  const [showalldata, setNonshowalldata] = useState(true);
   const [alldata, setAlldata] = useState([]);
-  const [nondataSearch, setNondataSearch] = useState(false);
-
-  const [Selectfilter, setSelectfilter] = useState("");
-
-  const whenSelectfilter = (e) => {
-    setSelectfilter(e.target.value);
-  };
-  // console.log(Selectfilter);
-
-  const optionFillter = {
-    useExtendedSearch: true,
-    includeScore: true,
-    keys: ["store_name", "store_religion"],
-  };
-
-  const fuseFillter = new Fuse(alldata, optionFillter);
-
-  useEffect(() => {
-    const resultFillter = fuseFillter.search({
-      $and: [{ store_name: search }, { store_religion: Selectfilter }],
-    });
-    console.log(resultFillter);
-  }, [search, Selectfilter]);
-
-  const options = {
-    keys: ["store_name"],
-  };
-  const fuse = new Fuse(alldata, options);
-
-  useEffect(() => {
-    const result = fuse.search(search);
-    setdataSearch(result);
-    // console.log(result);
-
-    if (dataSearch.length > 0) {
-      setNondataSearch(false);
-      // console.log("test");
-    } else {
-      setNondataSearch(true);
-      // console.log("test");
-    }
-
-    if (search.length > 0) {
-      setNondataSearch(false);
-    } else {
-      setNondataSearch(true);
-    }
-
-    if (showalldata) {
-      setNondataSearch(false);
-    }
-  }, [search, Selectfilter]);
+  const [dataSearch, setdataSearch] = useState([]);
+  const [showalldata, setShowalldata] = useState(true);
+  const [selectdata, setSelectdata] = useState([]);
+  const [Checkbox_1, setCheckbox_1] = useState(true);
+  const [Checkbox_2, setCheckbox_2] = useState(true);
+  const [showselectdata, setShowselectdata] = useState(true);
 
   useEffect(() => {
     axios.get("http://localhost:4000/store").then((response) => {
       setAlldata(response.data);
     });
-    if (Selectfilter != "all" && Selectfilter != "") {
-      axios
-        .post("http://localhost:4000/store-filter1", {
-          Selectfilter,
-        })
-        .then((response) => {
-          setAlldata(response.data);
-        });
+
+    if (search === "" && Checkbox_1) {
+      let result = alldata.filter((data) => data.store_religion === "0");
+      setSelectdata(result);
+      setShowselectdata(true);
+      setShowalldata(false);
     }
-  }, [search]);
+    if (search === "" && Checkbox_2) {
+      let result = alldata.filter((data) => data.store_religion === "1");
+      setSelectdata(result);
+      setShowselectdata(true);
+      setShowalldata(false);
+    }
+
+    if (
+      (search === "" && Checkbox_1 && Checkbox_2) ||
+      (search === "" && !Checkbox_1 && !Checkbox_2)
+    ) {
+      setSelectdata(alldata);
+      setShowselectdata(false);
+      setShowalldata(true);
+    }
+
+    const options = {
+      useExtendedSearch: true,
+      includeScore: true,
+      keys: ["store_name"],
+    };
+    const fuse = new Fuse(alldata, options);
+    let result = fuse.search(search);
+
+    setdataSearch(result);
+
+    if (search && Checkbox_1) {
+      let result = dataSearch.filter(
+        (data) => data.item.store_religion === "0"
+      );
+      setdataSearch(result);
+      setShowselectdata(false);
+      setShowalldata(false);
+    } else if (search && Checkbox_2) {
+      let result = dataSearch.filter(
+        (data) => data.item.store_religion === "1"
+      );
+      setdataSearch(result);
+      setShowselectdata(false);
+      setShowalldata(false);
+    }
+
+    if (search && Checkbox_1 && Checkbox_2) {
+      setdataSearch(result);
+      setShowselectdata(false);
+      setShowalldata(false);
+    }
+
+    if (search === "") {
+      if (Checkbox_1) {
+        let result = alldata.filter((data) => data.store_religion === "0");
+        setAlldata(result);
+      }
+      if (Checkbox_2) {
+        let result = alldata.filter((data) => data.store_religion === "1");
+        setAlldata(result);
+      }
+    }
+    // if (dataSearch.length > 0) {
+    //   setNondataSearch(false);
+    // } else {
+    //   setNondataSearch(true);
+    // }
+
+    // if (search.length > 0) {
+    //   setNondataSearch(false);
+    // } else {
+    //   setNondataSearch(true);
+    // }
+
+    // if (showalldata) {
+    //   setNondataSearch(false);
+    // }
+  }, [search, Checkbox_1, Checkbox_2]);
 
   const Search = (e) => {
     sestSearch(e.target.value);
-    setNonshowalldata(false);
+
     if (e.target.value === "") {
-      setNonshowalldata(true);
+      setShowalldata(true);
+    } else {
+      setShowalldata(false);
     }
   };
 
@@ -111,34 +129,29 @@ export default function HomeCust() {
           autoFocus
           value={search}
           onChange={(e) => Search(e)}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={Search}>
-                  <SearchIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
         />
-        <Box sx={{ minWidth: 120, marginTop: 3 }}>
-          <FormControl>
-            <InputLabel id="Select" size="23px">
-              ตัวกรอง
-            </InputLabel>
-            <Select
-              labelId="Select"
-              id="Select"
-              value={Selectfilter}
-              label="Select"
-              onChange={whenSelectfilter}
-            >
-              <MenuItem value={"all"}>ทั้งหมด</MenuItem>
-              <MenuItem value={"0"}>ศาสนาพุทธ</MenuItem>
-              <MenuItem value={"1"}>ศาสนาอิสลาม</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
+        <FormGroup aria-label="position" row>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={Checkbox_1}
+                onChange={(e) => setCheckbox_1(e.target.checked)}
+              />
+            }
+            label="ร้านศาสนาพุทธ"
+            labelPlacement="end"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={Checkbox_2}
+                onChange={(e) => setCheckbox_2(e.target.checked)}
+              />
+            }
+            label="ร้านศาสอิสลาม"
+            labelPlacement="end"
+          />
+        </FormGroup>
         <Stack spacing={2} sx={{ marginTop: 2 }}>
           {dataSearch.map((data, index) => {
             return (
@@ -176,8 +189,27 @@ export default function HomeCust() {
                 </Box>
               );
             })}
+
+          {showselectdata &&
+            selectdata.map((data, index) => {
+              return (
+                <Box
+                  key={data.store_name + index}
+                  sx={{
+                    display: "flex",
+                    "& > :not(style)": {
+                      m: 1,
+                      width: "100%",
+                      height: 128,
+                    },
+                  }}
+                >
+                  <Paper elevation={3}>{data.store_name}</Paper>
+                </Box>
+              );
+            })}
         </Stack>
-        {nondataSearch && (
+        {false && (
           <>
             <p>ไม่มีรายการที่ต้องการค้นหา</p>
           </>
