@@ -19,7 +19,7 @@ export default function HomeCust() {
   const [Checkbox_1, setCheckbox_1] = useState(true);
   const [Checkbox_2, setCheckbox_2] = useState(true);
   const [showselectdata, setShowselectdata] = useState(true);
-
+  // const [showtextdata, setShowtextdata] = useState(true);
   useEffect(() => {
     axios.get("http://localhost:4000/store").then((response) => {
       setAlldata(response.data);
@@ -90,9 +90,10 @@ export default function HomeCust() {
       }
     }
     // if (dataSearch.length > 0) {
-    //   setNondataSearch(false);
+    //   setShowtextdata(true);
+      
     // } else {
-    //   setNondataSearch(true);
+    //   setShowtextdata(true);
     // }
 
     // if (search.length > 0) {

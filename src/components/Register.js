@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import Grid from "@mui/material/Grid";
@@ -7,10 +7,16 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import Link from "@mui/material/Link";
 import { useNavigate } from "react-router-dom";
 
 export default function Register() {
   let navigate = useNavigate();
+  useEffect(() => {
+    if (sessionStorage["token"]) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   return (
     <>
@@ -25,44 +31,65 @@ export default function Register() {
             justifyContent: "center",
           }}
         >
-          <Typography component="h1" variant="h5">
-            ประเภทของสมาชิกที่ต้องการสมัคร
-          </Typography>
-          <Box noValidate sx={{ mt: 3 }} >
-            <Grid  spacing={2}>
-              <Grid item xs={12} sx={{marginBottom: 5}}>
+          <Typography variant="h5">ประเภทของสมาชิกที่ต้องการสมัคร</Typography>
+          <Box noValidate sx={{ mt: 3 }}>
+            <Grid spacing={2}>
+              <Grid item xs={12} sx={{ marginBottom: 3 }}>
                 <Card
-                  sx={{ minWidth: 275 }}
+                  sx={{ padding: 0, minWidth: 275 }}
                   component={Button}
                   onClick={() => navigate("/register-customer")}
                 >
-                  <CardContent>
-                    <Typography
-                      sx={{ fontSize: 30 }}
-                      color="text.secondary"
-                      gutterBottom
-                    >
-                      ลูกค้า
-                    </Typography>
-                  </CardContent>
+                  <Typography
+                    sx={{
+                      fontSize: 30,
+                      width: "100%",
+                      height: "100%",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      ":hover": {
+                        bgcolor: "#1a1a1a",
+                        color: "#EC6432",
+                      },
+                    }}
+                    color="text.secondary"
+                  >
+                    <p>ลูกค้า</p>
+                  </Typography>
                 </Card>
               </Grid>
               <Grid item xs={12}>
                 <Card
-                  sx={{ minWidth: 275 }}
+                  sx={{
+                    padding: 0,
+                    minWidth: 275,
+                  }}
                   component={Button}
                   onClick={() => navigate("/register-ownerstore")}
                 >
-                  <CardContent>
-                    <Typography
-                      sx={{ fontSize: 30 }}
-                      color="text.secondary"
-                      gutterBottom
-                    >
-                      เจ้าของร้าน
-                    </Typography>
-                  </CardContent>
+                  <Typography
+                    sx={{
+                      // margin: 0,
+                      fontSize: 30,
+                      width: "100%",
+                      height: "100%",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      ":hover": {
+                        bgcolor: "#1a1a1a",
+                        color: "#EC6432",
+                      },
+                    }}
+                    color="text.secondary"
+                  >
+                    <p>เจ้าของร้าน</p>
+                  </Typography>
                 </Card>
+                <Grid item sx={{ flex: 1, marginTop: 3 }}>
+                  <Link href="/login" variant="body2">
+                    ย้อนกลับ
+                  </Link>
+                </Grid>
               </Grid>
             </Grid>
           </Box>

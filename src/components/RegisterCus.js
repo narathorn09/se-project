@@ -21,6 +21,11 @@ import { IconButton, InputAdornment } from "@mui/material";
 
 const RegisterCus = () => {
   let navigate = useNavigate();
+  useEffect(() => {
+    if (sessionStorage["token"]) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   const [memUsername, setMemUsername] = useState("");
   const [memPassword, setMemPassword] = useState("");
@@ -62,7 +67,7 @@ const RegisterCus = () => {
     setMemUsername(e.target.value);
     checkUsername(e.target.value);
   };
-  
+
   useEffect(() => {
     // setMemUsername("");
     // setMemPassword("");
@@ -109,7 +114,7 @@ const RegisterCus = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       const Data = {
         mem_type: 0,
@@ -267,7 +272,7 @@ const RegisterCus = () => {
                       }}
                     >
                       <IconButton>
-                        {showpass ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                        {showpass ? <VisibilityOffIcon /> : <VisibilityIcon />}
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -313,9 +318,9 @@ const RegisterCus = () => {
                         }}
                       >
                         {showpasscon ? (
-                          <VisibilityIcon />
-                        ) : (
                           <VisibilityOffIcon />
+                        ) : (
+                          <VisibilityIcon />
                         )}
                       </IconButton>
                     </InputAdornment>

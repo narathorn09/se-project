@@ -18,8 +18,10 @@ axios.defaults.headers.common["Authorization"] = `Bearer ${tokensend}`;
 export default function Login() {
   let navigate = useNavigate();
 
+  // const [memType, setMemType] = useState("");
   const [memUsername, setMemUsername] = useState("");
   const [memPassword, setMemPassword] = useState("");
+  const [usernameTaken, setUsernameTaken] = useState(false);
   // const [validtoken, setValidToken] = useState(false);
 
   useEffect(() => {
@@ -34,12 +36,22 @@ export default function Login() {
       alert("โปรดกรอกข้อมูลเพื่อเข้าสู่ระบบ");
       return;
     }
+    const response = await axios.get(
+      `http://localhost:4000/members-check-username?mem_username=${memUsername.trim()}`
+    );
+    if (response.data.length > 0) {
+      setUsernameTaken(true);
+    } else if (response.data.length === 0) {
+      setUsernameTaken(false);
+      alert("ชื่อผู้ใช้ไม่ถูกต้อง");
+      return;
+    }
+
     try {
       const Data = {
         mem_username: memUsername,
         mem_password: memPassword,
       };
-
       // dotenv.config();
       // let api_root = process.env.REACT_APP_API_ROOT;
       // let login_path = api_root + "/login";
@@ -49,14 +61,22 @@ export default function Login() {
         if (res.data.token) {
           alert("เข้าสู่ระบบสำเร็จ");
           sessionStorage.setItem("token", res.data.token);
-          navigate("/");
+          axios
+            .post("http://localhost:4000/members-check-memtype", {
+              mem_username: memUsername,
+            })
+            .then((res) => {
+              const type = res.data[0].mem_type;
+              if (type === "0") {
+                navigate("/dfg");
+              }
+              if (type === "1") {
+                navigate("/oo");
+              }
+            });
         } else {
-          alert("เข้าไม่สู่ระบบสำเร็จ");
+          alert("รหัสผ่านไม่ถูกต้อง");
         }
-
-        // console.log(res);
-        // console.log(res.data);
-        // console.log(res.data.token);
       });
     } catch (error) {
       console.log(error);
@@ -79,7 +99,7 @@ export default function Login() {
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
-          <Typography component="h1" variant="h5">
+          <Typography variant="h5">
             หน้าเข้าสู่ระบบ
           </Typography>
           <Box

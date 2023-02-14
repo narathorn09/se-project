@@ -220,6 +220,20 @@ app.get("/members-check-username", (req, res) => {
   );
 });
 
+app.post("/members-check-memtype", (req, res) => {
+  let mem_username = req.body.mem_username;
+  db.query(
+    `SELECT mem_type FROM member where mem_username="${mem_username}"`,
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    }
+  );
+});
+
 app.get("/profile", authenticateToken, (req, res) => {
   let mem_id = req.user.mem_id;
   db.query(`SELECT * FROM customer where mem_id=${mem_id}`, (err, result) => {
