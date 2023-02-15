@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import Grid from "@mui/material/Grid";
@@ -6,15 +6,17 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 import Link from "@mui/material/Link";
 import { useNavigate } from "react-router-dom";
 
 export default function Register() {
   let navigate = useNavigate();
   useEffect(() => {
-    if (sessionStorage["token"]) {
-      navigate("/");
+    if (sessionStorage["token"] && localStorage["mem_type"] === "cust") {
+      navigate("/cust");
+    }
+    if (sessionStorage["token"] && localStorage["mem_type"] === "owner") {
+      navigate("/owner");
     }
   }, [navigate]);
 

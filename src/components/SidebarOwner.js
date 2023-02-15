@@ -125,7 +125,7 @@ const Drawer = styled(MuiDrawer, {
 //   },
 // }));
 
-export default function Sidebar() {
+export default function SidebarOwner() {
   let navigate = useNavigate();
 
   const tokensend = sessionStorage.getItem("token");
@@ -180,7 +180,7 @@ export default function Sidebar() {
               justifyContent: "end",
             }}
           >
-            ระบบจองคิวสั่งอาหาร
+            ระบบจองคิวสั่งอาหาร : เจ้าของร้าน
           </Typography>
           {/* <IconButton>
             {theme.direction === "rtl" ? (

@@ -21,12 +21,15 @@ export default function Login() {
   // const [memType, setMemType] = useState("");
   const [memUsername, setMemUsername] = useState("");
   const [memPassword, setMemPassword] = useState("");
-  const [usernameTaken, setUsernameTaken] = useState(false);
+  // const [usernameTaken, setUsernameTaken] = useState(false);
   // const [validtoken, setValidToken] = useState(false);
 
   useEffect(() => {
-    if (sessionStorage["token"]) {
-      navigate("/");
+    if (sessionStorage["token"] && localStorage["mem_type"] === "cust") {
+      navigate("/cust");
+    }
+    if (sessionStorage["token"] && localStorage["mem_type"] === "owner") {
+      navigate("/owner");
     }
   }, [navigate]);
 
@@ -39,10 +42,7 @@ export default function Login() {
     const response = await axios.get(
       `http://localhost:4000/members-check-username?mem_username=${memUsername.trim()}`
     );
-    if (response.data.length > 0) {
-      setUsernameTaken(true);
-    } else if (response.data.length === 0) {
-      setUsernameTaken(false);
+    if (response.data.length === 0) {
       alert("ชื่อผู้ใช้ไม่ถูกต้อง");
       return;
     }
@@ -68,12 +68,12 @@ export default function Login() {
             .then((res) => {
               const type = res.data[0].mem_type;
               if (type === "0") {
-                navigate("/");
                 localStorage.setItem("mem_type", "cust");
+                navigate("/cust");
               }
               if (type === "1") {
-                navigate("/oo");
                 localStorage.setItem("mem_type", "owner");
+                navigate("/owner");
               }
             });
         } else {
@@ -101,9 +101,7 @@ export default function Login() {
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
-          <Typography variant="h5">
-            หน้าเข้าสู่ระบบ
-          </Typography>
+          <Typography variant="h5">หน้าเข้าสู่ระบบ</Typography>
           <Box
             component="form"
             onSubmit={handleSubmit}

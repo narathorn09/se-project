@@ -26,9 +26,12 @@ import InputLabel from "@mui/material/InputLabel";
 const RegisterOnwer = () => {
   let navigate = useNavigate();
   useEffect(() => {
-    if (sessionStorage["token"]) {
-      navigate("/");
-    }
+     if (sessionStorage["token"] && localStorage["mem_type"] === "cust") {
+       navigate("/cust");
+     }
+     if (sessionStorage["token"] && localStorage["mem_type"] === "owner") {
+       navigate("/owner");
+     }
   }, [navigate]);
 
   const [memUsername, setMemUsername] = useState("");

@@ -36,7 +36,10 @@ export default function CardProfile() {
             />
           </Grid>
           <Grid item xs={5}>
-            <Typography variant="h4">ประเภทสมาชิก : ลูกค้า</Typography>
+            <Typography variant="h4">
+              ประเภทสมาชิก :{" "}
+              {localStorage["mem_type"] === "cust" ? "ลูกค้า" : "เจ้าของร้าน"}
+            </Typography>
             <Typography variant="h11">
               ชื่อ-นามสกุล : {member.cust_name} {member.cust_Lname}
             </Typography>
