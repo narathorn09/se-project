@@ -8,12 +8,16 @@ import axios from "axios";
 
 export default function CardProfile() {
   const [member, setMember] = useState({});
-
+  const type = localStorage["mem_type"];
+  console.log(type)
+  
   useEffect(() => {
-    axios.get("http://localhost:4000/profile").then((response) => {
-      setMember(response.data);
-      console.log(response.data);
-    });
+    axios
+      .post("http://localhost:4000/profile",{ type: type })
+      .then((response) => {
+        setMember(response.data);
+        console.log(response.data);
+      });
   }, []);
 
   return (
@@ -37,14 +41,20 @@ export default function CardProfile() {
           </Grid>
           <Grid item xs={5}>
             <Typography variant="h4">
-              ประเภทสมาชิก :{" "}
-              {localStorage["mem_type"] === "cust" ? "ลูกค้า" : "เจ้าของร้าน"}
+              ประเภทสมาชิก : {type === "cust" ? "ลูกค้า" : "เจ้าของร้าน"}
             </Typography>
             <Typography variant="h11">
-              ชื่อ-นามสกุล : {member.cust_name} {member.cust_Lname}
+              ชื่อ-นามสกุล :{" "}
+              {type === "cust" ? member.cust_name : member.owner_name}
+              {type === "cust" ? member.cust_Lname : member.owner_Lname}
             </Typography>
-            <Typography>Email : {member.cust_email}</Typography>
-            <Typography>เบอร์มือถือ : {member.cust_tel}</Typography>
+            <Typography>
+              Email : {type === "cust" ? member.cust_email : member.owner_email}
+            </Typography>
+            <Typography>
+              เบอร์มือถือ :{" "}
+              {type === "cust" ? member.cust_tel : member.owner_tel}
+            </Typography>
           </Grid>
         </Grid>
       </Container>

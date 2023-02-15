@@ -22,6 +22,8 @@ import HomeIcon from "@mui/icons-material/Home";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 // import Badge from "@mui/material/Badge";
+import StoreIcon from "@mui/icons-material/Store";
+import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 import CardProfile from "./ProfileCust";
 import CustomizedTables from "./Table";
 import HomeCust from "./HomeCust";
@@ -219,70 +221,73 @@ export default function SidebarOwner() {
         </DrawerHeader>
         <Divider />
         <List>
-          {["ข้อมูลส่วนตัว", "หน้าแรก", "รถเข็น", "รายการสั่งซื้อ"].map(
-            (text, index) => (
-              // <Link
-              //   to={(() => {
-              //     if (text === "ข้อมูลส่วนตัว") {
-              //       return "/profile";
-              //     } else if (text === "หน้าแรก") {
-              //       return "/home";
-              //     } else if (text === "รถเข็น") {
-              //       return "/cart";
-              //     } else if (text === "รายการสั่งซื้อ") {
-              //       return "/order";
-              //     }
-              //   })()}
-              //   style={{ textDecoration: "none" }}
-              // >
-              <ListItem
-                onClick={() => changeFocus(index)}
-                key={text}
-                disablePadding
+          {[
+            "ข้อมูลส่วนตัว",
+            "หน้าร้าน",
+            "คำสั่งซื้อจากลูกค้า",
+            "รายการที่กำลังทำ",
+          ].map((text, index) => (
+            // <Link
+            //   to={(() => {
+            //     if (text === "ข้อมูลส่วนตัว") {
+            //       return "/profile";
+            //     } else if (text === "หน้าแรก") {
+            //       return "/home";
+            //     } else if (text === "รถเข็น") {
+            //       return "/cart";
+            //     } else if (text === "รายการสั่งซื้อ") {
+            //       return "/order";
+            //     }
+            //   })()}
+            //   style={{ textDecoration: "none" }}
+            // >
+            <ListItem
+              onClick={() => changeFocus(index)}
+              key={text}
+              disablePadding
+              sx={{
+                color: Focus === index ? "#EC6432" : "black",
+                // backgroundColor: Focus === index ? "black" : "white",
+              }}
+            >
+              <ListItemButton
                 sx={{
-                  color: Focus === index ? "#EC6432" : "black",
-                  // backgroundColor: Focus === index ? "black" : "white",
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
                 }}
               >
-                <ListItemButton
+                <ListItemIcon
                   sx={{
-                    minHeight: 48,
-                    justifyContent: open ? "initial" : "center",
-                    px: 2.5,
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                    color: Focus === index ? "#EC6432" : "black",
                   }}
                 >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : "auto",
-                      justifyContent: "center",
-                      color: Focus === index ? "#EC6432" : "black",
-                    }}
-                  >
-                    {/* <StyledBadge
+                  {/* <StyledBadge
                       overlap="circular"
                       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                       variant="dot"
                     > */}
-                    {(() => {
-                      if (text === "ข้อมูลส่วนตัว") {
-                        return <AccountCircleIcon />;
-                      } else if (text === "หน้าแรก") {
-                        return <HomeIcon />;
-                      } else if (text === "รถเข็น") {
-                        return <ShoppingCartIcon />;
-                      } else if (text === "รายการสั่งซื้อ") {
-                        return <LibraryBooksIcon />;
-                      }
-                    })()}
-                    {/* </StyledBadge> แสดงสถานะแบบจุดสีแดง*/}
-                  </ListItemIcon>
-                  <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                </ListItemButton>
-              </ListItem>
-              // </Link>
-            )
-          )}
+                  {(() => {
+                    if (text === "ข้อมูลส่วนตัว") {
+                      return <AccountCircleIcon />;
+                    } else if (text === "หน้าร้าน") {
+                      return <StoreIcon />;
+                    } else if (text === "คำสั่งซื้อจากลูกค้า") {
+                      return <LibraryBooksIcon />;
+                    } else if (text === "รายการที่กำลังทำ") {
+                      return <HourglassTopIcon />;
+                    }
+                  })()}
+                  {/* </StyledBadge> แสดงสถานะแบบจุดสีแดง*/}
+                </ListItemIcon>
+                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </ListItem>
+            // </Link>
+          ))}
         </List>
         <Divider />
       </Drawer>

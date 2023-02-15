@@ -255,9 +255,16 @@ app.post("/members-check-memtype", (req, res) => {
   );
 });
 
-app.get("/profile", authenticateToken, (req, res) => {
+app.post("/profile", authenticateToken, (req, res) => {
+  let type = req.body.type;
   let mem_id = req.user.mem_id;
-  db.query(`SELECT * FROM customer where mem_id=${mem_id}`, (err, result) => {
+  let query1 =
+    type === "cust"
+      ? `SELECT * FROM customer where mem_id=${mem_id}`
+      : `SELECT * FROM ownerstore where mem_id=${mem_id}`;
+  console.log(type);
+  console.log(query1);
+  db.query(query1, (err, result) => {
     if (result) {
       res.send(result[0]);
       // console.log(result[0]);

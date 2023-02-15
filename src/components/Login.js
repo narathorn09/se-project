@@ -59,7 +59,7 @@ export default function Login() {
 
       await axios.post("http://localhost:4000/login", Data).then((res) => {
         if (res.data.token) {
-          alert("เข้าสู่ระบบสำเร็จ");
+          // alert("เข้าสู่ระบบสำเร็จ");
           sessionStorage.setItem("token", res.data.token);
           axios
             .post("http://localhost:4000/members-check-memtype", {
