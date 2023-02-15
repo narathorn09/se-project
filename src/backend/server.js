@@ -111,6 +111,7 @@ app.post("/register-customer", (req, res) => {
 });
 
 app.post("/register-ownerstore", (req, res) => {
+  let mem_password = req.body.mem_password;
   db.beginTransaction((err) => {
     if (err) {
       res.json({
@@ -118,54 +119,74 @@ app.post("/register-ownerstore", (req, res) => {
         message: "Error starting transaction",
       });
     }
+    bcrypt.hash(mem_password, SALT_ROUNDS, (err, hash) => {
+      const memberSql =
+        "INSERT INTO member (mem_type, mem_username, mem_password) VALUES (?, ?, ?)";
+      const memberValues = [1, req.body.mem_username, hash];
 
-    const memberSql =
-      "INSERT INTO member (mem_type, mem_username, mem_password) VALUES (?, ?, ?)";
-    const memberValues = [1, req.body.mem_username, req.body.mem_password];
-
-    db.query(memberSql, memberValues, (err, result) => {
-      if (err) {
-        db.rollback(() => {
-          res.json({
-            status: "400",
-            message: "Error inserting data into member table",
-          });
-        });
-      }
-
-      const ownerstoreSql =
-        "INSERT INTO ownerstore (mem_id, owner_name, ower_Lname, owner_tel, owner_email) VALUES (?, ?, ?, ?,?)";
-      const ownerstoreValues = [
-        result.insertId,
-        req.body.owner_name,
-        req.body.ower_Lname,
-        req.body.owner_tel,
-        req.body.owner_email,
-      ];
-
-      db.query(ownerstoreSql, ownerstoreValues, (err, result) => {
+      db.query(memberSql, memberValues, (err, result1) => {
         if (err) {
           db.rollback(() => {
             res.json({
               status: "400",
-              message: "Error inserting data into ownerstore table",
+              message: "Error inserting data into member table",
             });
           });
         }
 
-        db.commit((err) => {
+        const ownerstoreSql =
+          "INSERT INTO ownerstore (mem_id, owner_name, ower_Lname, owner_tel, owner_email) VALUES (?, ?, ?, ?,?)";
+        const ownerstoreValues = [
+          result1.insertId,
+          req.body.owner_name,
+          req.body.ower_Lname,
+          req.body.owner_tel,
+          req.body.owner_email,
+        ];
+
+        db.query(ownerstoreSql, ownerstoreValues, (err, result2) => {
           if (err) {
             db.rollback(() => {
               res.json({
                 status: "400",
-                message: "Error committing transaction",
+                message: "Error inserting data into ownerstore table",
               });
             });
           }
+          // const mem_forkey_store = result
+          const storeSql =
+            "INSERT INTO store (mem_id, store_name, store_details, store_religion) VALUES (?, ?, ?, ?)";
+          const storeValues = [
+            result1.insertId,
+            req.body.store_name,
+            req.body.store_details,
+            req.body.store_religion,
+          ];
 
-          res.json({
-            status: "200",
-            message: "Insertion member and ownerstore successful",
+          db.query(storeSql, storeValues, (err, result) => {
+            if (err) {
+              db.rollback(() => {
+                res.json({
+                  status: "400",
+                  message: "Error inserting data into store table",
+                });
+              });
+            }
+            db.commit((err) => {
+              if (err) {
+                db.rollback(() => {
+                  res.json({
+                    status: "400",
+                    message: "Error committing transaction",
+                  });
+                });
+              }
+
+              res.json({
+                status: "200",
+                message: "Insertion member and ownerstore successful",
+              });
+            });
           });
         });
       });

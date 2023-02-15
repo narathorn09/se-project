@@ -68,10 +68,12 @@ export default function Login() {
             .then((res) => {
               const type = res.data[0].mem_type;
               if (type === "0") {
-                navigate("/dfg");
+                navigate("/");
+                localStorage.setItem("mem_type", "cust");
               }
               if (type === "1") {
                 navigate("/oo");
+                localStorage.setItem("mem_type", "owner");
               }
             });
         } else {

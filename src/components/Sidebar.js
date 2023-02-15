@@ -195,6 +195,7 @@ export default function Sidebar() {
             aria-label="logout"
             onClick={() => {
               sessionStorage.clear();
+              localStorage.clear();
               navigate("/login");
             }}
           >
