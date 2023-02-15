@@ -139,7 +139,7 @@ export default function SidebarCust() {
 
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [Focus, setFocus] = React.useState(-1);
+  const [Focus, setFocus] = React.useState(1);
 
   const changeFocus = (index) => {
     setFocus(index);

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect ,useState} from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
@@ -30,6 +30,7 @@ import HomeCust from "./HomeCust";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import axios from "axios";
+import Store from "./Store";
 
 const drawerWidth = 240;
 
@@ -140,8 +141,8 @@ export default function SidebarOwner() {
   }, [navigate]);
 
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
-  const [Focus, setFocus] = React.useState(-1);
+  const [open, setOpen] = useState(false);
+  const [Focus, setFocus] = useState(1);
 
   const changeFocus = (index) => {
     setFocus(index);
@@ -298,7 +299,7 @@ export default function SidebarOwner() {
           if (Focus === 0) {
             return <CardProfile />;
           } else if (Focus === 1) {
-            return <HomeCust />;
+            return <Store />;
           } else if (Focus === 2) {
             return <ShoppingCartIcon />;
           } else if (Focus === 3) {
