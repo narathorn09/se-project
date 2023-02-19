@@ -16,6 +16,7 @@ export default function App() {
           <Route path="/register-customer" element={<RegisterCus />} />
           <Route path="/register-ownerstore" element={<RegisterOwner />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
           <Route path="/cust" element={<SidebarCust />} />
           <Route path="/owner" element={<SidebarOwner />} />
         </Routes>

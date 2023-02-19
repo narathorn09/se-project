@@ -77,6 +77,7 @@ export default function Login() {
               }
             });
         } else {
+          console.log(res.data.token);
           alert("รหัสผ่านไม่ถูกต้อง");
         }
       });

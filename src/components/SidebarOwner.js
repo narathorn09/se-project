@@ -138,7 +138,13 @@ export default function SidebarOwner() {
     if (!("token" in sessionStorage)) {
       navigate("/login");
     }
-  }, [navigate]);
+    if (sessionStorage["token"] && localStorage["mem_type"] === "cust") {
+      navigate("/cust");
+    }
+    if (sessionStorage["token"] && localStorage["mem_type"] === "owner") {
+      navigate("/owner");
+    }
+  }, []);
 
   const theme = useTheme();
   const [open, setOpen] = useState(false);

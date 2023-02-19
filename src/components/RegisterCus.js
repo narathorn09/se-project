@@ -169,6 +169,7 @@ const RegisterCus = () => {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
+                type="text"
                 autoComplete="given-name"
                 name="firstName"
                 required
@@ -182,6 +183,7 @@ const RegisterCus = () => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
+                type="text"
                 required
                 fullWidth
                 id="lastName"
@@ -194,6 +196,7 @@ const RegisterCus = () => {
             </Grid>
             <Grid item xs={12}>
               <TextField
+                type="email"
                 required
                 fullWidth
                 id="email"
@@ -208,6 +211,7 @@ const RegisterCus = () => {
             </Grid>
             <Grid item xs={12}>
               <TextField
+                type="tel"
                 required
                 fullWidth
                 id="phone"

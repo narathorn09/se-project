@@ -35,10 +35,10 @@ export default function Register() {
         >
           <Typography variant="h5">ประเภทของสมาชิกที่ต้องการสมัคร</Typography>
           <Box noValidate sx={{ mt: 3 }}>
-            <Grid spacing={2}>
+            <Grid>
               <Grid item xs={12} sx={{ marginBottom: 3 }}>
                 <Card
-                  sx={{ padding: 0, minWidth: 275 }}
+                  sx={{ padding: 0, minWidth: 275, height: 100 }}
                   component={Button}
                   onClick={() => navigate("/register-customer")}
                 >
@@ -56,7 +56,7 @@ export default function Register() {
                     }}
                     color="text.secondary"
                   >
-                    <p>ลูกค้า</p>
+                    ลูกค้า
                   </Typography>
                 </Card>
               </Grid>
@@ -65,6 +65,7 @@ export default function Register() {
                   sx={{
                     padding: 0,
                     minWidth: 275,
+                    height: 100,
                   }}
                   component={Button}
                   onClick={() => navigate("/register-ownerstore")}
@@ -84,7 +85,7 @@ export default function Register() {
                     }}
                     color="text.secondary"
                   >
-                    <p>เจ้าของร้าน</p>
+                    เจ้าของร้าน
                   </Typography>
                 </Card>
                 <Grid item sx={{ flex: 1, marginTop: 3 }}>

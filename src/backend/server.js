@@ -198,6 +198,8 @@ app.post("/register-ownerstore", (req, res) => {
 app.post("/login", (req, res) => {
   let username = req.body.mem_username;
   let user_password = req.body.mem_password;
+  console.log("username", username);
+  console.log("user_password", user_password);
   let query = `SELECT * FROM member WHERE mem_username = '${username}'`;
   db.query(query, (err, rows) => {
     if (err) {
@@ -208,18 +210,21 @@ app.post("/login", (req, res) => {
       });
     } else {
       let db_password = rows[0].mem_password;
+      console.log("db_password", db_password);
       bcrypt.compare(user_password, db_password, (err, result) => {
+        console.log("err", err);
+        console.log("result", result);
         if (result) {
           let payload = {
             mem_type: rows[0].mem_type,
             mem_id: rows[0].mem_id,
             mem_username: rows[0].mem_username,
           };
-          // console.log(payload);
+          console.log("payload", payload);
           let token = jwt.sign(payload, TOKEN_SECRET, { expiresIn: "1d" });
           res.send({ token });
         } else {
-          console.log(err);
+          // console.log("error", err);
           res.send("Invalid username / password");
         }
       });
@@ -285,6 +290,78 @@ app.get("/store", (req, res) => {
       // console.log(err);
       res.send(err.data);
     }
+  });
+});
+
+// app.get("/get-store-id"),authenticateToken, (req, res) => {
+//     let mem_id = req.user.mem_id;
+//     console.log(mem_id);
+//     let getStoreId = `SELECT store_id FROM store where mem_id=${mem_id}`;
+//     db.query(getStoreId, (err, result) => {
+//       if (err) {
+//         console.log(err);
+//       } else {
+//         console.log(result);
+//         res.send("result" ,result);
+//       }
+//     });
+//   };
+
+app.post("/add-menu", authenticateToken, (req, res) => {
+  let mem_id = req.user.mem_id;
+  db.beginTransaction((err) => {
+    if (err) {
+      res.json({
+        status: "400",
+        message: "Error starting transaction",
+      });
+    }
+    db.query(
+      `SELECT store_id FROM store where mem_id=${mem_id}`,
+      (err, result) => {
+        let store_id = result[0].store_id;
+        // console.log(store_id);
+        if (err) {
+          db.rollback(() => {
+            res.json({
+              status: "400",
+              message: "Error get data from store table",
+            });
+          });
+        }
+
+        let addMenuSQL =
+          "INSERT INTO menu (store_id ,menu_name, menu_price) VALUES (?, ?, ?)";
+        let memberValues = [store_id, req.body.menu_name, req.body.menu_price];
+
+        db.query(addMenuSQL, memberValues, (err, result) => {
+          if (err) {
+            db.rollback(() => {
+              res.json({
+                status: "400",
+                message: "Error insert data into menu table",
+              });
+            });
+          }
+
+          db.commit((err) => {
+            if (err) {
+              db.rollback(() => {
+                res.json({
+                  status: "400",
+                  message: "Error committing transaction",
+                });
+              });
+            }
+
+            res.json({
+              status: "200",
+              message: "Get store id and insertion menu successful",
+            });
+          });
+        });
+      }
+    );
   });
 });
 

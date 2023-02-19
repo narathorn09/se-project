@@ -46,7 +46,8 @@ export default function CardProfile() {
             <Typography variant="h11">
               ชื่อ-นามสกุล :{" "}
               {type === "cust" ? member.cust_name : member.owner_name}
-              {type === "cust" ? member.cust_Lname : member.owner_Lname}
+              {" "}
+              {type === "cust" ? member.cust_Lname : member.ower_Lname}
             </Typography>
             <Typography>
               Email : {type === "cust" ? member.cust_email : member.owner_email}

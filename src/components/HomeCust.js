@@ -9,6 +9,9 @@ import Fuse from "fuse.js";
 import Checkbox from "@mui/material/Checkbox";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
+import { Button } from "@mui/material";
 
 export default function HomeCust() {
   const [search, sestSearch] = useState("");
@@ -91,7 +94,7 @@ export default function HomeCust() {
     }
     // if (dataSearch.length > 0) {
     //   setShowtextdata(true);
-      
+
     // } else {
     //   setShowtextdata(true);
     // }
@@ -175,19 +178,92 @@ export default function HomeCust() {
           {showalldata &&
             alldata.map((data, index) => {
               return (
-                <Box
-                  key={data.store_name + index}
-                  sx={{
-                    display: "flex",
-                    "& > :not(style)": {
-                      m: 1,
-                      width: "100%",
-                      height: 128,
-                    },
-                  }}
-                >
-                  <Paper elevation={3}>{data.store_name}</Paper>
-                </Box>
+                <Grid item xs={1.3}>
+                  <Box
+                    key={data.store_name + index}
+                    sx={{
+                      display: "flex",
+                      "& > :not(style)": {
+                        m: 1,
+                        width: "100%",
+                        height: 128,
+                      },
+                    }}
+                  >
+                    <Paper
+                      component={Button}
+                      elevation={3}
+                      sx={{
+                        ":hover": {
+                          bgcolor: "#1a1a1a",
+                          color: "#EC6432",
+                        },
+                      }}
+                    >
+                      <Grid container spacing={2}>
+                        <Grid item xs={1.3}>
+                          <Box
+                            component="img"
+                            sx={{
+                              height: 100,
+                              width: 100,
+                              borderRadius: 1,
+                              margin: 1.7,
+                              // maxHeight: { xs: 233, md: 167 },
+                              // maxWidth: { xs: 350, md: 250 },
+                            }}
+                            alt="The house from the offer."
+                            src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&w=350&dpr=2"
+                          />
+                        </Grid>
+                        <Grid
+                          item
+                          xs={4}
+                          md={9}
+                          sx={{
+                            textAlign: "left",
+                            margin: 1.7,
+                          }}
+                        >
+                          <Typography variant="h6" gutterBottom>
+                            {data.store_name}
+                          </Typography>
+                          <Typography variant="h6" sx={{ fontSize: 16 }}>
+                            {data.store_details}
+                          </Typography>
+                          <Typography variant="h6" sx={{ fontSize: 16 }}>
+                            {data.store_religion === "0"
+                              ? "ศาสนาพุทธ"
+                              : "ศาสนาอิสลาม"}
+                          </Typography>
+                        </Grid>
+                        {/* <Grid item xs={1}>
+                        <Box
+                          sx={{
+                            paddingTop: 4.6,
+                            alignItems: "center",
+                          }}
+                        >
+                          <Box
+                            component={Button}
+                            sx={{
+                              width: 100,
+                              height: 50,
+                              alignItems: "center",
+                              ":hover": {
+                                bgcolor: "#1a1a1a",
+                                color: "#EC6432",
+                              },
+                            }}
+                          >
+                            ดูเมนู
+                          </Box>
+                        </Box>
+                      </Grid> */}
+                      </Grid>
+                    </Paper>
+                  </Box>
+                </Grid>
               );
             })}
 
@@ -205,7 +281,22 @@ export default function HomeCust() {
                     },
                   }}
                 >
-                  <Paper elevation={3}>{data.store_name}</Paper>
+                  <Paper elevation={3}>
+                    <Box
+                      component="img"
+                      sx={{
+                        height: 100,
+                        width: 100,
+                        borderRadius: 1,
+                        margin: 1.7,
+                        // maxHeight: { xs: 233, md: 167 },
+                        // maxWidth: { xs: 350, md: 250 },
+                      }}
+                      alt="The house from the offer."
+                      src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&w=350&dpr=2"
+                    />
+                    {data.store_name}
+                  </Paper>
                 </Box>
               );
             })}
