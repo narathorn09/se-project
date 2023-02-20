@@ -8,11 +8,7 @@ import CardMedia from "@mui/material/CardMedia";
 import { useEffect, useState } from "react";
 import Divider from "@mui/material/Divider";
 import axios from "axios";
-import Alert from "@mui/material/Alert";
-import Snackbar from "@mui/material/Snackbar";
 import { useNavigate } from "react-router-dom";
-// const tokensend = sessionStorage.getItem("token");
-// axios.defaults.headers.common["Authorization"] = `Bearer ${tokensend}`;
 
 const Store = () => {
   let navigate = useNavigate();
@@ -22,6 +18,8 @@ const Store = () => {
   const [priceMenu, setpriceMenu] = useState("");
   const [saveMenu, setsaveMenu] = useState(false);
   const [listMenu, setlistMenu] = useState([]);
+  const [file, setFile] = useState([]);
+  const [showphoto, setShowphoto] = useState(null);
 
   useEffect(() => {
     setnameMenu("");
@@ -34,42 +32,57 @@ const Store = () => {
       .then((res) => {
         setsaveMenu(true);
         setlistMenu(res.data);
-        navigate("/owner");
+        // const path = res.data.menu_photo;
+        // // setShowphoto();
+        console.log(res.data[0].menu_photo);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
 
+  const saveFile = (e) => {
+    setFile(e.target.files[0]);
+    setShowphoto(URL.createObjectURL(e.target.files[0]));
+  };
+
   const handleClick = async () => {
-    const data = {
-      menu_name: nameMenu,
-      menu_price: priceMenu,
-    };
+    const formData = new FormData();
+    formData.append("menu_name", nameMenu);
+    formData.append("menu_price", priceMenu);
+    formData.append("file", file);
+    // const data = {
+    //   menu_name: nameMenu,
+    //   menu_price: priceMenu,
+    //   file: file,
+    //   filename: fileName,
+    // };
+    //  console.log(data);
+    try {
+      await axios
+        .post("http://localhost:4000/add-menu", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+        .then((res) => {
+          setsaveMenu(true);
+          alert("เพิ่มเมนูสำเร็จ");
+          // console.log(res.data);
+        });
+    } catch (err) {
+      alert(err.message);
+      alert("เกิดข้อผิดพลาด เพิ่มไม่เมนูสำเร็จ");
+      console.log(err);
+    }
 
-    await axios
-      .post("http://localhost:4000/add-menu", data)
-      .then((res) => {
-        setsaveMenu(true);
-        navigate("/owner");
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
+    window.location.reload();
     // axios.post(`http://localhost:4000/add-menu=${username.trim()}`);
   };
-console.log(listMenu);
-  const ButtonCancelled = () => {};
+  // console.log(listMenu);
+
+  // const ButtonCancelled = () => {};
   return (
     <>
       <Container sx={{ paddingTop: 5 }}>
-        <Snackbar open={saveMenu} autoHideDuration={1}>
-          <Alert severity="success" sx={{ width: "100%" }}>
-            เพิ่มเมนูสำเร็จ สำเร็จ !
-          </Alert>
-        </Snackbar>
         <Typography sx={{ width: "100%", textAlign: "center" }} variant="h4">
           หน้าร้าน
         </Typography>
@@ -124,6 +137,23 @@ console.log(listMenu);
                   onChange={(e) => setpriceMenu(e.target.value)}
                 />
               </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  type="file"
+                  id="file"
+                  onChange={saveFile}
+                />
+              </Grid>
+              {showphoto && (
+                <Grid item xs={12}>
+                  <Box
+                    component="img"
+                    src={showphoto}
+                    sx={{ width: 100, height: 100 }}
+                  />
+                </Grid>
+              )}
               <Grid
                 item
                 xs={12}
@@ -136,7 +166,7 @@ console.log(listMenu);
                 <Button
                   variant="contained"
                   color="success"
-                  onClick={handleClick}
+                  onClick={() => handleClick()}
                 >
                   บันทึก
                 </Button>
@@ -179,8 +209,10 @@ console.log(listMenu);
                   sx={{ padding: 1 }}
                   component="img"
                   height="140"
-                  image="https://plus.unsplash.com/premium_photo-1674654419438-3720f0b71087?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
-                  alt="green iguana"
+                  // src="test.jpg"
+                  // src={`../../uploads/${data.menu_photo}`}
+                  src={require(`../../uploads/${data.menu_photo}`)}
+                  alt="food menu"
                 />
                 <CardContent className="cardContent">
                   <Typography gutterBottom variant="h5" component="div">

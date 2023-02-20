@@ -9,17 +9,23 @@ const TOKEN_SECRET = process.env.TOKEN_SECRET;
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql");
+const multer = require("multer");
+const path = require("path");
+const bodyParser = require("body-parser");
 const app = express();
 const port = 4000;
 
 app.use(cors());
 app.use(express.json());
+// app.use(express.static("./public"));
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
 
 const db = mysql.createConnection({
-  user: "admin",
+  user: "root",
   host: "localhost",
-  password: "admin",
-  database: "test",
+  password: "",
+  database: "system_order",
 });
 
 db.connect();
@@ -307,8 +313,27 @@ app.get("/store", (req, res) => {
 //     });
 //   };
 
-app.post("/add-menu", authenticateToken, (req, res) => {
+const storage = multer.diskStorage({
+  destination: (req, file, callBack) => {
+    callBack(null, "uploads/"); // './public/images/' directory name where save the file
+  },
+  filename: (req, file, callBack) => {
+    callBack(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
+
+const upload = multer({
+  storage: storage,
+});
+
+app.post("/add-menu", authenticateToken, upload.single("file"), (req, res) => {
+  console.log(req.file.filename);
+
   let mem_id = req.user.mem_id;
+
   db.beginTransaction((err) => {
     if (err) {
       res.json({
@@ -331,8 +356,13 @@ app.post("/add-menu", authenticateToken, (req, res) => {
         }
 
         let addMenuSQL =
-          "INSERT INTO menu (store_id ,menu_name, menu_price) VALUES (?, ?, ?)";
-        let memberValues = [store_id, req.body.menu_name, req.body.menu_price];
+          "INSERT INTO menu (store_id ,menu_name, menu_price,menu_photo) VALUES (?, ?, ?,?)";
+        let memberValues = [
+          store_id,
+          req.body.menu_name,
+          req.body.menu_price,
+          req.file.filename,
+        ];
 
         db.query(addMenuSQL, memberValues, (err, result) => {
           if (err) {
