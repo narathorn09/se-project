@@ -8,18 +8,38 @@ import CardMedia from "@mui/material/CardMedia";
 import { useEffect, useState } from "react";
 import Divider from "@mui/material/Divider";
 import axios from "axios";
-
+import Alert from "@mui/material/Alert";
+import Snackbar from "@mui/material/Snackbar";
+import { useNavigate } from "react-router-dom";
 // const tokensend = sessionStorage.getItem("token");
 // axios.defaults.headers.common["Authorization"] = `Bearer ${tokensend}`;
 
 const Store = () => {
+  let navigate = useNavigate();
+
   const [addMenu, setaddMenu] = useState(false);
   const [nameMenu, setnameMenu] = useState("");
   const [priceMenu, setpriceMenu] = useState("");
+  const [saveMenu, setsaveMenu] = useState(false);
+  const [listMenu, setlistMenu] = useState([]);
 
   useEffect(() => {
-    // setpriceMenu("");
-  }, [addMenu]);
+    setnameMenu("");
+    setpriceMenu("");
+  }, [saveMenu]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:4000/list-menu")
+      .then((res) => {
+        setsaveMenu(true);
+        setlistMenu(res.data);
+        navigate("/owner");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   const handleClick = async () => {
     const data = {
@@ -30,6 +50,8 @@ const Store = () => {
     await axios
       .post("http://localhost:4000/add-menu", data)
       .then((res) => {
+        setsaveMenu(true);
+        navigate("/owner");
         console.log(res.data);
       })
       .catch((err) => {
@@ -38,10 +60,16 @@ const Store = () => {
 
     // axios.post(`http://localhost:4000/add-menu=${username.trim()}`);
   };
-
+console.log(listMenu);
+  const ButtonCancelled = () => {};
   return (
     <>
       <Container sx={{ paddingTop: 5 }}>
+        <Snackbar open={saveMenu} autoHideDuration={1}>
+          <Alert severity="success" sx={{ width: "100%" }}>
+            เพิ่มเมนูสำเร็จ สำเร็จ !
+          </Alert>
+        </Snackbar>
         <Typography sx={{ width: "100%", textAlign: "center" }} variant="h4">
           หน้าร้าน
         </Typography>
@@ -133,7 +161,7 @@ const Store = () => {
             columnGap: 1.5,
           }}
         >
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((data, index) => (
+          {listMenu.map((data, index) => (
             <Grid key={data + index} item xs={2.9} maxWidth={100}>
               <Card
                 sx={{
@@ -156,9 +184,9 @@ const Store = () => {
                 />
                 <CardContent className="cardContent">
                   <Typography gutterBottom variant="h5" component="div">
-                    ข้าวกระเพราหมูสับ
+                    {data.menu_name}
                   </Typography>
-                  <Typography variant="body2">40.00 บาท</Typography>
+                  <Typography variant="body2">{data.menu_price} บาท</Typography>
                   <Box
                     className="buttons"
                     sx={{

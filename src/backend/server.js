@@ -365,6 +365,62 @@ app.post("/add-menu", authenticateToken, (req, res) => {
   });
 });
 
+app.get("/list-menu", authenticateToken, (req, res) => {
+  let mem_id = req.user.mem_id;
+  db.beginTransaction((err) => {
+    if (err) {
+      res.json({
+        status: "400",
+        message: "Error starting transaction",
+      });
+    }
+    db.query(
+      `SELECT store_id FROM store where mem_id=${mem_id}`,
+      (err, result) => {
+        let store_id = result[0].store_id;
+        // console.log(store_id);
+        if (err) {
+          db.rollback(() => {
+            res.json({
+              status: "400",
+              message: "Error get data from store table",
+            });
+          });
+        }
+
+        let getMenuSQL = `SELECT * FROM menu where store_id=${store_id}`;
+
+        db.query(getMenuSQL, (err, result) => {
+          if (err) {
+            db.rollback(() => {
+              res.json({
+                status: "400",
+                message: "Error get menu from menu table",
+              });
+            });
+          }
+
+          db.commit((err) => {
+            if (err) {
+              db.rollback(() => {
+                res.json({
+                  status: "400",
+                  message: "Error committing transaction",
+                });
+              });
+            }
+            res.send(result);
+            // res.json({
+            //   status: "200",
+            //   message: "Get menu successful",
+            // });
+          });
+        });
+      }
+    );
+  });
+});
+
 app.listen(port, () => {
   console.log("CORS-enabled web server listening on port 4000");
 });
