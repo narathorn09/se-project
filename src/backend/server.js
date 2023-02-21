@@ -318,6 +318,34 @@ app.post("/store-search", (req, res) => {
   );
 });
 
+app.post("/store-select", (req, res) => {
+  let store_id = req.body.store_id;
+  console.log(store_id);
+  db.query(`SELECT * FROM store where store_id=${store_id}`, (err, result) => {
+    if (result) {
+      console.log(result);
+      res.send(result);
+    } else {
+      console.log(err);
+      res.send(err.data);
+    }
+  });
+});
+
+app.post("/list-menu-store-select", (req, res) => {
+  let store_id = req.body.store_id;
+  console.log(store_id);
+  db.query(`SELECT * FROM menu where store_id=${store_id}`, (err, result) => {
+    if (result) {
+      console.log(result);
+      res.send(result);
+    } else {
+      console.log(err);
+      res.send(err.data);
+    }
+  });
+});
+
 // app.get("/get-store-id"),authenticateToken, (req, res) => {
 //     let mem_id = req.user.mem_id;
 //     console.log(mem_id);

@@ -8,18 +8,14 @@ import CardMedia from "@mui/material/CardMedia";
 import { useEffect, useState } from "react";
 import Divider from "@mui/material/Divider";
 import axios from "axios";
-// import { useNavigate } from "react-router-dom";
 
 const Store = () => {
-  // let navigate = useNavigate();
-
   const [nameStore, setnameStore] = useState("");
   const [detailStore, setdetailStore] = useState("");
 
   const [addMenu, setaddMenu] = useState(false);
   const [nameMenu, setnameMenu] = useState("");
   const [priceMenu, setpriceMenu] = useState("");
-  // const [saveMenu, setsaveMenu] = useState(false);
   const [listMenu, setlistMenu] = useState([]);
   const [file, setFile] = useState([]);
   const [showphoto, setShowphoto] = useState(null);
@@ -27,11 +23,6 @@ const Store = () => {
 
   const [editfile, setEditFile] = useState([]);
   const [showeditfile, setShowEditFile] = useState(null);
-
-  const editFile = (e) => {
-    setEditFile(e.target.files[0]);
-    setShowEditFile(URL.createObjectURL(e.target.files[0]));
-  };
 
   const [upnameMenu, setupnameMenu] = useState("");
   const [upID, setupID] = useState(0);
@@ -65,6 +56,11 @@ const Store = () => {
       });
   }, []);
 
+  const editFile = (e) => {
+    setEditFile(e.target.files[0]);
+    setShowEditFile(URL.createObjectURL(e.target.files[0]));
+  };
+
   const saveFile = (e) => {
     setFile(e.target.files[0]);
     setShowphoto(URL.createObjectURL(e.target.files[0]));
@@ -82,12 +78,10 @@ const Store = () => {
           headers: { "Content-Type": "multipart/form-data" },
         })
         .then((res) => {
-          // setsaveMenu(true);
           alert("เพิ่มเมนูสำเร็จ");
           window.location.reload();
         });
     } catch (err) {
-      // alert(err.message);
       alert("เกิดข้อผิดพลาด เพิ่มไม่เมนูสำเร็จ");
       console.log(err);
     }
@@ -331,7 +325,6 @@ const Store = () => {
         )}
         <Grid
           container
-          // spacing={2}
           sx={{
             marginTop: 5,
             rowGap: 3,
@@ -348,7 +341,7 @@ const Store = () => {
                   ":hover": {
                     bgcolor: "#1a1a1a",
                     color: "#EC6432",
-                    transform: "translateY(-10px)",
+                    transform: "scale(1.05)",
                   },
                 }}
               >
@@ -356,8 +349,6 @@ const Store = () => {
                   sx={{ padding: 1 }}
                   component="img"
                   height="140"
-                  // src="test.jpg"
-                  // src={`../../uploads/${data.menu_photo}`}
                   src={require(`../../uploads/${data.menu_photo}`)}
                   alt="food menu"
                 />
