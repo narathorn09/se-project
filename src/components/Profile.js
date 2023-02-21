@@ -18,7 +18,7 @@ export default function CardProfile() {
         setMember(response.data);
         console.log(response.data);
       });
-  }, []);
+  }, [type]);
 
   return (
     <Box sx={{ width: "100%", height: "100%", boxShadow: 3 }}>

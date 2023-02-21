@@ -197,6 +197,7 @@ export default function HomeCust() {
                         ":hover": {
                           bgcolor: "#1a1a1a",
                           color: "#EC6432",
+                          transform: "scale(1.07)",
                         },
                       }}
                     >

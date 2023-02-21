@@ -18,20 +18,18 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import HomeIcon from "@mui/icons-material/Home";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 // import Badge from "@mui/material/Badge";
 import StoreIcon from "@mui/icons-material/Store";
 import HourglassTopIcon from "@mui/icons-material/HourglassTop";
-import CardProfile from "./ProfileCust";
+import CardProfile from "./Profile";
 import CustomizedTables from "./Table";
-import HomeCust from "./HomeCust";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import axios from "axios";
 import Store from "./Store";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -140,13 +138,13 @@ export default function SidebarOwner(prop) {
     if (!("token" in sessionStorage)) {
       navigate("/login");
     }
-    if (sessionStorage["token"] && localStorage["mem_type"] === "cust") {
-      navigate("/cust/home");
-    }
+    // if (sessionStorage["token"] && localStorage["mem_type"] === "cust") {
+    //   navigate("/cust/home");
+    // }
     // if (sessionStorage["token"] && localStorage["mem_type"] === "owner") {
     //   navigate("/owner/home");
     // }
-  }, []);
+  }, [navigate]);
 
   const theme = useTheme();
   const [open, setOpen] = useState(false);

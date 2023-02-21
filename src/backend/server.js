@@ -51,6 +51,7 @@ function authenticateToken(req, res, next) {
   });
 }
 
+// page RegisterCustomer ################################################################################################
 app.post("/register-customer", (req, res) => {
   let mem_password = req.body.mem_password;
   db.beginTransaction((err) => {
@@ -116,6 +117,7 @@ app.post("/register-customer", (req, res) => {
   });
 });
 
+// page RegisterOwnerStore ################################################################################################
 app.post("/register-ownerstore", (req, res) => {
   let mem_password = req.body.mem_password;
   db.beginTransaction((err) => {
@@ -200,6 +202,7 @@ app.post("/register-ownerstore", (req, res) => {
   });
 });
 
+// page Login ################################################################################################
 /* API for Processing Runner Authorization */
 app.post("/login", (req, res) => {
   let username = req.body.mem_username;
@@ -265,7 +268,7 @@ app.post("/members-check-memtype", (req, res) => {
     }
   );
 });
-
+// page Profile ################################################################################################
 app.post("/profile", authenticateToken, (req, res) => {
   let type = req.body.type;
   let mem_id = req.user.mem_id;
@@ -285,7 +288,7 @@ app.post("/profile", authenticateToken, (req, res) => {
     }
   });
 });
-
+// page HomeCust ################################################################################################
 app.get("/store", (req, res) => {
   db.query(`SELECT * FROM store`, (err, result) => {
     if (result) {
@@ -312,7 +315,8 @@ app.get("/store", (req, res) => {
 //       }
 //     });
 //   };
-// stroe ################################################################################################
+
+// page stroe ################################################################################################
 
 const storage = multer.diskStorage({
   destination: (req, file, callBack) => {

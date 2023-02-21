@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import RegisterCus from "./components/RegisterCus";
+import RegisterCus from "./components/RegisterCust";
 import RegisterOwner from "./components/RegisterOwner";
 import SidebarCust from "./components/SidebarCust";
 import SidebarOwner from "./components/SidebarOwner";

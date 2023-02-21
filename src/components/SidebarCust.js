@@ -22,13 +22,13 @@ import HomeIcon from "@mui/icons-material/Home";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 // import Badge from "@mui/material/Badge";
-import CardProfile from "./ProfileCust";
+import CardProfile from "./Profile";
 import CustomizedTables from "./Table";
 import HomeCust from "./HomeCust";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import axios from "axios";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -142,7 +142,7 @@ export default function SidebarCust(prop) {
     // if (sessionStorage["token"] && localStorage["mem_type"] === "owner") {
     //   navigate("/owner/home");
     // }
-  }, []);
+  }, [navigate]);
 
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
