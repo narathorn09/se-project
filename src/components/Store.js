@@ -13,6 +13,9 @@ import { useNavigate } from "react-router-dom";
 const Store = () => {
   let navigate = useNavigate();
 
+  const [nameStore, setnameStore] = useState("");
+  const [detailStore, setdetailStore] = useState("");
+
   const [addMenu, setaddMenu] = useState(false);
   const [nameMenu, setnameMenu] = useState("");
   const [priceMenu, setpriceMenu] = useState("");
@@ -46,9 +49,16 @@ const Store = () => {
       .then((res) => {
         setsaveMenu(true);
         setlistMenu(res.data);
-        // const path = res.data.menu_photo;
-        // // setShowphoto();
-        console.log(res.data[0].menu_photo);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    axios
+      .get("http://localhost:4000/store-detail")
+      .then((res) => {
+        setnameStore(res.data[0].store_name);
+        setdetailStore(res.data[0].store_details);
       })
       .catch((err) => {
         console.log(err);
@@ -115,7 +125,7 @@ const Store = () => {
     setorigin_FileName(filename);
     setEditMenu(true);
   };
-  
+
   const buttonDelete = (id, name) => {
     const text = `คุณต้องการลบเมนู ${name}?`;
     const confirmed = window.confirm(text);
@@ -133,13 +143,13 @@ const Store = () => {
     <>
       <Container sx={{ paddingTop: 5 }}>
         <Typography sx={{ width: "100%", textAlign: "center" }} variant="h4">
-          หน้าร้าน
+          ร้าน{nameStore}
         </Typography>
         <Typography
           sx={{ width: "100%", textAlign: "center", marginTop: 2 }}
           variant="h6"
         >
-          รายละเอียด
+          รายละเอียด : {detailStore}
         </Typography>
         <Divider sx={{ marginTop: 2 }} />
         <Box
@@ -155,6 +165,7 @@ const Store = () => {
             textAlign: "center",
             marginTop: 2,
             border: 1,
+            fontSize: 20,
           }}
         >
           เพิ่มเมนู

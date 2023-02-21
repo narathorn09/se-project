@@ -312,6 +312,7 @@ app.get("/store", (req, res) => {
 //       }
 //     });
 //   };
+// stroe ################################################################################################
 
 const storage = multer.diskStorage({
   destination: (req, file, callBack) => {
@@ -431,6 +432,19 @@ app.put(
     });
   }
 );
+
+app.get("/store-detail", authenticateToken, (req, res) => {
+  let mem_id = req.user.mem_id;
+  db.query(`SELECT * FROM store where mem_id=${mem_id}`, (err, result) => {
+    if (result) {
+      console.log(result);
+      res.send(result);
+    } else {
+      console.log(err);
+      res.send(err.data);
+    }
+  });
+});
 
 app.get("/list-menu", authenticateToken, (req, res) => {
   let mem_id = req.user.mem_id;
