@@ -331,8 +331,9 @@ const upload = multer({
 });
 
 app.post("/add-menu", authenticateToken, upload.single("file"), (req, res) => {
-  console.log(req.file.filename);
-
+  let file = req.file?.filename
+    ? req.file?.filename
+    : "food default image.webp";
   let mem_id = req.user.mem_id;
 
   db.beginTransaction((err) => {
@@ -362,7 +363,7 @@ app.post("/add-menu", authenticateToken, upload.single("file"), (req, res) => {
           store_id,
           req.body.menu_name,
           req.body.menu_price,
-          req.file.filename,
+          file,
         ];
 
         db.query(addMenuSQL, memberValues, (err, result) => {

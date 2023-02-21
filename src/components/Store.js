@@ -8,10 +8,10 @@ import CardMedia from "@mui/material/CardMedia";
 import { useEffect, useState } from "react";
 import Divider from "@mui/material/Divider";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 const Store = () => {
-  let navigate = useNavigate();
+  // let navigate = useNavigate();
 
   const [nameStore, setnameStore] = useState("");
   const [detailStore, setdetailStore] = useState("");
@@ -19,7 +19,7 @@ const Store = () => {
   const [addMenu, setaddMenu] = useState(false);
   const [nameMenu, setnameMenu] = useState("");
   const [priceMenu, setpriceMenu] = useState("");
-  const [saveMenu, setsaveMenu] = useState(false);
+  // const [saveMenu, setsaveMenu] = useState(false);
   const [listMenu, setlistMenu] = useState([]);
   const [file, setFile] = useState([]);
   const [showphoto, setShowphoto] = useState(null);
@@ -47,7 +47,7 @@ const Store = () => {
     axios
       .get("http://localhost:4000/list-menu")
       .then((res) => {
-        setsaveMenu(true);
+        // setsaveMenu(true);
         setlistMenu(res.data);
       })
       .catch((err) => {
@@ -82,15 +82,15 @@ const Store = () => {
           headers: { "Content-Type": "multipart/form-data" },
         })
         .then((res) => {
-          setsaveMenu(true);
+          // setsaveMenu(true);
           alert("เพิ่มเมนูสำเร็จ");
+          window.location.reload();
         });
     } catch (err) {
-      alert(err.message);
+      // alert(err.message);
       alert("เกิดข้อผิดพลาด เพิ่มไม่เมนูสำเร็จ");
       console.log(err);
     }
-    window.location.reload();
   };
 
   const updateClick = async () => {
