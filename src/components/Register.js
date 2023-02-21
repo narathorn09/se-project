@@ -11,12 +11,13 @@ import { useNavigate } from "react-router-dom";
 
 export default function Register() {
   let navigate = useNavigate();
+
   useEffect(() => {
     if (sessionStorage["token"] && localStorage["mem_type"] === "cust") {
-      navigate("/cust");
+      navigate("/cust/home");
     }
     if (sessionStorage["token"] && localStorage["mem_type"] === "owner") {
-      navigate("/owner");
+      navigate("/owner/home");
     }
   }, [navigate]);
 

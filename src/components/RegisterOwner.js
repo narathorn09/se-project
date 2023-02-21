@@ -25,14 +25,14 @@ import InputLabel from "@mui/material/InputLabel";
 
 const RegisterOnwer = () => {
   let navigate = useNavigate();
-  useEffect(() => {
-     if (sessionStorage["token"] && localStorage["mem_type"] === "cust") {
-       navigate("/cust");
-     }
-     if (sessionStorage["token"] && localStorage["mem_type"] === "owner") {
-       navigate("/owner");
-     }
-  }, [navigate]);
+useEffect(() => {
+  if (sessionStorage["token"] && localStorage["mem_type"] === "cust") {
+    navigate("/cust/home");
+  }
+  if (sessionStorage["token"] && localStorage["mem_type"] === "owner") {
+    navigate("/owner/home");
+  }
+}, [navigate]);
 
   const [memUsername, setMemUsername] = useState("");
   const [memPassword, setMemPassword] = useState("");

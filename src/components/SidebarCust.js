@@ -229,6 +229,7 @@ export default function SidebarCust(prop) {
           {["ข้อมูลส่วนตัว", "หน้าแรก", "รถเข็น", "รายการสั่งซื้อ"].map(
             (text, index) => (
               <Link
+                key={text}
                 to={(() => {
                   if (text === "ข้อมูลส่วนตัว") {
                     return "/cust/profile";

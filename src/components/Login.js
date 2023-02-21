@@ -24,14 +24,14 @@ export default function Login() {
   // const [usernameTaken, setUsernameTaken] = useState(false);
   // const [validtoken, setValidToken] = useState(false);
 
-  // useEffect(() => {
-  //   if (sessionStorage["token"] && localStorage["mem_type"] === "cust") {
-  //     navigate("/cust");
-  //   }
-    // if (sessionStorage["token"] && localStorage["mem_type"] === "owner") {
-    //   navigate("/owner/home");
-    // }
-  // }, [navigate]);
+  useEffect(() => {
+    if (sessionStorage["token"] && localStorage["mem_type"] === "cust") {
+      navigate("/cust/home");
+    }
+    if (sessionStorage["token"] && localStorage["mem_type"] === "owner") {
+      navigate("/owner/home");
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

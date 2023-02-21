@@ -23,12 +23,12 @@ const RegisterCus = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
-      if (sessionStorage["token"] && localStorage["mem_type"] === "cust") {
-        navigate("/cust");
-      }
-      if (sessionStorage["token"] && localStorage["mem_type"] === "owner") {
-        navigate("/owner");
-      }
+    if (sessionStorage["token"] && localStorage["mem_type"] === "cust") {
+      navigate("/cust/home");
+    }
+    if (sessionStorage["token"] && localStorage["mem_type"] === "owner") {
+      navigate("/owner/home");
+    }
   }, [navigate]);
 
   const [memUsername, setMemUsername] = useState("");
