@@ -18,7 +18,11 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<Login />} />
           <Route path="/cust" element={<SidebarCust />} />
-          <Route path="/owner" element={<SidebarOwner />} />
+          {/* <Route path="/owner" element={<SidebarOwner />} /> */}
+          <Route path="/owner/profile" element={<SidebarOwner index={0} />} />
+          <Route path="/owner/home" element={<SidebarOwner index={1} />} />
+          <Route path="/owner/order" element={<SidebarOwner index={2} />} />
+          <Route path="/owner/cooking" element={<SidebarOwner index={3} />} />
         </Routes>
       </Router>
     </>

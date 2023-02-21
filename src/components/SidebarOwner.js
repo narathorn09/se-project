@@ -1,4 +1,4 @@
-import React, { useEffect ,useState} from "react";
+import React, { useEffect, useState } from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
@@ -23,7 +23,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 // import Badge from "@mui/material/Badge";
 import StoreIcon from "@mui/icons-material/Store";
-import HourglassTopIcon from '@mui/icons-material/HourglassTop';
+import HourglassTopIcon from "@mui/icons-material/HourglassTop";
 import CardProfile from "./ProfileCust";
 import CustomizedTables from "./Table";
 import HomeCust from "./HomeCust";
@@ -31,6 +31,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import axios from "axios";
 import Store from "./Store";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -128,9 +129,10 @@ const Drawer = styled(MuiDrawer, {
 //   },
 // }));
 
-export default function SidebarOwner() {
+export default function SidebarOwner(prop) {
   let navigate = useNavigate();
-
+  let { index } = prop;
+  console.log(index);
   const tokensend = sessionStorage.getItem("token");
   axios.defaults.headers.common["Authorization"] = `Bearer ${tokensend}`;
 
@@ -141,14 +143,14 @@ export default function SidebarOwner() {
     if (sessionStorage["token"] && localStorage["mem_type"] === "cust") {
       navigate("/cust");
     }
-    if (sessionStorage["token"] && localStorage["mem_type"] === "owner") {
-      navigate("/owner");
-    }
+    // if (sessionStorage["token"] && localStorage["mem_type"] === "owner") {
+    //   navigate("/owner/home");
+    // }
   }, []);
 
   const theme = useTheme();
   const [open, setOpen] = useState(false);
-  const [Focus, setFocus] = useState(1);
+  const [Focus, setFocus] = useState(index);
 
   const changeFocus = (index) => {
     setFocus(index);
@@ -230,70 +232,70 @@ export default function SidebarOwner() {
         <List>
           {[
             "ข้อมูลส่วนตัว",
-            "หน้าร้าน",
+            "หน้าแรก",
             "คำสั่งซื้อจากลูกค้า",
             "รายการที่กำลังทำ",
           ].map((text, index) => (
-            // <Link
-            //   to={(() => {
-            //     if (text === "ข้อมูลส่วนตัว") {
-            //       return "/profile";
-            //     } else if (text === "หน้าแรก") {
-            //       return "/home";
-            //     } else if (text === "รถเข็น") {
-            //       return "/cart";
-            //     } else if (text === "รายการสั่งซื้อ") {
-            //       return "/order";
-            //     }
-            //   })()}
-            //   style={{ textDecoration: "none" }}
-            // >
-            <ListItem
-              onClick={() => changeFocus(index)}
+            <Link
               key={text}
-              disablePadding
-              sx={{
-                color: Focus === index ? "#EC6432" : "black",
-                // backgroundColor: Focus === index ? "black" : "white",
-              }}
+              to={(() => {
+                if (text === "ข้อมูลส่วนตัว") {
+                  return "/owner/profile";
+                } else if (text === "หน้าแรก") {
+                  return "/owner/home";
+                } else if (text === "คำสั่งซื้อจากลูกค้า") {
+                  return "/owner/order";
+                } else if (text === "รายการที่กำลังทำ") {
+                  return "/owner/cooking";
+                }
+              })()}
+              style={{ textDecoration: "none" }}
             >
-              <ListItemButton
+              <ListItem
+                onClick={() => changeFocus(index)}
+                disablePadding
                 sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
+                  color: Focus === index ? "#EC6432" : "black",
+                  // backgroundColor: Focus === index ? "black" : "white",
                 }}
               >
-                <ListItemIcon
+                <ListItemButton
                   sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                    color: Focus === index ? "#EC6432" : "black",
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
                   }}
                 >
-                  {/* <StyledBadge
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                      color: Focus === index ? "#EC6432" : "black",
+                    }}
+                  >
+                    {/* <StyledBadge
                       overlap="circular"
                       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                       variant="dot"
                     > */}
-                  {(() => {
-                    if (text === "ข้อมูลส่วนตัว") {
-                      return <AccountCircleIcon />;
-                    } else if (text === "หน้าร้าน") {
-                      return <StoreIcon />;
-                    } else if (text === "คำสั่งซื้อจากลูกค้า") {
-                      return <LibraryBooksIcon />;
-                    } else if (text === "รายการที่กำลังทำ") {
-                      return <HourglassTopIcon />;
-                    }
-                  })()}
-                  {/* </StyledBadge> แสดงสถานะแบบจุดสีแดง*/}
-                </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-            // </Link>
+                    {(() => {
+                      if (text === "ข้อมูลส่วนตัว") {
+                        return <AccountCircleIcon />;
+                      } else if (text === "หน้าแรก") {
+                        return <StoreIcon />;
+                      } else if (text === "คำสั่งซื้อจากลูกค้า") {
+                        return <LibraryBooksIcon />;
+                      } else if (text === "รายการที่กำลังทำ") {
+                        return <HourglassTopIcon />;
+                      }
+                    })()}
+                    {/* </StyledBadge> แสดงสถานะแบบจุดสีแดง*/}
+                  </ListItemIcon>
+                  <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+              </ListItem>
+            </Link>
           ))}
         </List>
         <Divider />

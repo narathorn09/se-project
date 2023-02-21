@@ -395,7 +395,7 @@ app.post("/add-menu", authenticateToken, upload.single("file"), (req, res) => {
   });
 });
 
-app.delete("/delete-menu/:id",authenticateToken,  (req, res) => {
+app.delete("/delete-menu/:id", authenticateToken, (req, res) => {
   let id = req.params.id;
   console.log(id);
   db.query(`DELETE FROM menu WHERE menu_id=${id}`, (err, result) => {
@@ -408,6 +408,29 @@ app.delete("/delete-menu/:id",authenticateToken,  (req, res) => {
     }
   });
 });
+
+app.put(
+  "/update-menu",
+  authenticateToken,
+  upload.single("file"),
+  (req, res) => {
+    console.log(req.body);
+    const { menu_id, menu_name, menu_price, origin_filename } = req.body;
+    let newPhto = req.file?.filename ? req.file?.filename : origin_filename;
+    let query = `UPDATE menu SET menu_name = "${menu_name}", menu_price = ${menu_price}, menu_photo="${newPhto}" WHERE menu_id=${menu_id}`;
+    console.log(query);
+    db.query(query, (err, result) => {
+      if (result) {
+        // console.log(result);
+        res.send(result);
+        // console.log(result[0]);
+      } else {
+        // console.log(err);
+        res.send(err.data);
+      }
+    });
+  }
+);
 
 app.get("/list-menu", authenticateToken, (req, res) => {
   let mem_id = req.user.mem_id;

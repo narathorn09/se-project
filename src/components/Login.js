@@ -28,9 +28,9 @@ export default function Login() {
     if (sessionStorage["token"] && localStorage["mem_type"] === "cust") {
       navigate("/cust");
     }
-    if (sessionStorage["token"] && localStorage["mem_type"] === "owner") {
-      navigate("/owner");
-    }
+    // if (sessionStorage["token"] && localStorage["mem_type"] === "owner") {
+    //   navigate("/owner/home");
+    // }
   }, [navigate]);
 
   const handleSubmit = async (e) => {
@@ -73,7 +73,7 @@ export default function Login() {
               }
               if (type === "1") {
                 localStorage.setItem("mem_type", "owner");
-                navigate("/owner");
+                navigate("/owner/home");
               }
             });
         } else {

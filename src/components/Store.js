@@ -22,14 +22,18 @@ const Store = () => {
   const [showphoto, setShowphoto] = useState(null);
   const [editMenu, setEditMenu] = useState(false);
 
-  const [dataMenu, setDataMenu] = useState({
-    id: "",
-    name: "",
-    price: "",
-    photo: [],
-  });
+  const [editfile, setEditFile] = useState([]);
+  const [showeditfile, setShowEditFile] = useState(null);
 
-  // const [changePhoto, setChangePhoto] = useState([])
+  const editFile = (e) => {
+    setEditFile(e.target.files[0]);
+    setShowEditFile(URL.createObjectURL(e.target.files[0]));
+  };
+
+  const [upnameMenu, setupnameMenu] = useState("");
+  const [upID, setupID] = useState(0);
+  const [upPriced, setupPrice] = useState(0);
+  const [origin_fileName, setorigin_FileName] = useState("");
 
   useEffect(() => {
     setnameMenu("");
@@ -56,11 +60,6 @@ const Store = () => {
     setShowphoto(URL.createObjectURL(e.target.files[0]));
   };
 
-  const changeFile = (e) => {
-    setDataMenu({ photo: e.target.files[0] });
-    // setShowphoto(URL.createObjectURL(e.target.files[0]));
-  };
-
   const handleClick = async () => {
     const formData = new FormData();
     formData.append("menu_name", nameMenu);
@@ -84,17 +83,39 @@ const Store = () => {
     window.location.reload();
   };
 
-  const buttonEdit = (id, name, price, photo) => {
-    setDataMenu({
-      id: id,
-      name: name,
-      price: price,
-      photo: null,
-    });
+  const updateClick = async () => {
+    const formDataUpdate = new FormData();
+    formDataUpdate.append("menu_id", upID);
+    formDataUpdate.append("menu_name", upnameMenu);
+    formDataUpdate.append("menu_price", upPriced);
+    formDataUpdate.append("origin_filename", origin_fileName);
+    if (editFile) {
+      formDataUpdate.append("file", editfile);
+    }
+
+    try {
+      await axios
+        .put("http://localhost:4000/update-menu", formDataUpdate, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+        .then((res) => {
+          alert("แก้ไขเมนูสำเร็จ");
+          window.location.reload();
+        });
+    } catch (err) {
+      alert("เกิดข้อผิดพลาด แก้ไขไม่เมนูสำเร็จ");
+      console.log(err);
+    }
+  };
+
+  const buttonEdit = (id, name, price, filename) => {
+    setupnameMenu(name);
+    setupID(id);
+    setupPrice(price);
+    setorigin_FileName(filename);
     setEditMenu(true);
   };
-  console.log(dataMenu);
-
+  
   const buttonDelete = (id, name) => {
     const text = `คุณต้องการลบเมนู ${name}?`;
     const confirmed = window.confirm(text);
@@ -114,7 +135,6 @@ const Store = () => {
         <Typography sx={{ width: "100%", textAlign: "center" }} variant="h4">
           หน้าร้าน
         </Typography>
-
         <Typography
           sx={{ width: "100%", textAlign: "center", marginTop: 2 }}
           variant="h6"
@@ -202,7 +222,10 @@ const Store = () => {
                   variant="contained"
                   color="error"
                   sx={{ marginLeft: 1 }}
-                  onClick={() => setaddMenu(false)}
+                  onClick={() => {
+                    setaddMenu(false);
+                    setShowphoto(null);
+                  }}
                 >
                   ยกเลิก
                 </Button>
@@ -211,31 +234,40 @@ const Store = () => {
             <Divider sx={{ marginTop: 2 }} />
           </Box>
         )}
+        <Divider sx={{ marginTop: 3, marginBottom: 2 }} />
         {editMenu && (
           <Box>
             {" "}
             <Grid container rowSpacing={2}>
               <Grid item xs={12}>
+                <Typography
+                  sx={{ width: "100%", textAlign: "center" }}
+                  variant="h5"
+                >
+                  แก้ไขข้อมูลเมนู
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  id="menu"
+                  id="up_menu"
                   label="ชื่อเมนูอาหาร"
-                  name="menu"
-                  autoComplete="menu"
-                  value={dataMenu.name}
-                  onChange={(e) => setDataMenu({ name: e.target.value })}
+                  name="up_menu"
+                  autoComplete="up_menu"
+                  value={upnameMenu}
+                  onChange={(e) => setupnameMenu(e.target.value)}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
                   fullWidth
                   type="number"
-                  id="number"
+                  id="up_number"
                   label="ราคา"
-                  name="number"
-                  autoComplete="number"
-                  value={dataMenu.price}
-                  onChange={(e) => setDataMenu({ price: e.target.value })}
+                  name="up_number"
+                  autoComplete="up_number"
+                  value={upPriced}
+                  onChange={(e) => setupPrice(e.target.value)}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -243,8 +275,45 @@ const Store = () => {
                   fullWidth
                   type="file"
                   id="file"
-                  onChange={changeFile}
+                  onChange={editFile}
                 />
+              </Grid>
+              {showeditfile && (
+                <Grid item xs={12}>
+                  <Box
+                    component="img"
+                    src={showeditfile}
+                    sx={{ width: 100, height: 100 }}
+                  />
+                </Grid>
+              )}
+              <Grid
+                item
+                xs={12}
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                }}
+              >
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={() => updateClick()}
+                >
+                  บันทึก
+                </Button>
+                <Button
+                  variant="contained"
+                  color="error"
+                  sx={{ marginLeft: 1 }}
+                  onClick={() => {
+                    setEditMenu(false);
+                    setShowEditFile(null);
+                  }}
+                >
+                  ยกเลิก
+                </Button>
               </Grid>
             </Grid>
           </Box>
