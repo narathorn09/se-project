@@ -141,7 +141,7 @@ export default function SidebarOwner(prop) {
       navigate("/login");
     }
     if (sessionStorage["token"] && localStorage["mem_type"] === "cust") {
-      navigate("/cust");
+      navigate("/cust/home");
     }
     // if (sessionStorage["token"] && localStorage["mem_type"] === "owner") {
     //   navigate("/owner/home");

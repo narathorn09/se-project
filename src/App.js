@@ -17,8 +17,12 @@ export default function App() {
           <Route path="/register-ownerstore" element={<RegisterOwner />} />
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<Login />} />
-          <Route path="/cust" element={<SidebarCust />} />
-          {/* <Route path="/owner" element={<SidebarOwner />} /> */}
+          {/* Section Customer */}
+          <Route path="/cust/profile" element={<SidebarCust index={0} />} />
+          <Route path="/cust/home" element={<SidebarCust index={1} />} />
+          <Route path="/cust/cart" element={<SidebarCust index={2} />} />
+          <Route path="/cust/order" element={<SidebarCust index={3} />} />
+          {/* Section Owner */}
           <Route path="/owner/profile" element={<SidebarOwner index={0} />} />
           <Route path="/owner/home" element={<SidebarOwner index={1} />} />
           <Route path="/owner/order" element={<SidebarOwner index={2} />} />

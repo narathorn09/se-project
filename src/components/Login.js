@@ -24,14 +24,14 @@ export default function Login() {
   // const [usernameTaken, setUsernameTaken] = useState(false);
   // const [validtoken, setValidToken] = useState(false);
 
-  useEffect(() => {
-    if (sessionStorage["token"] && localStorage["mem_type"] === "cust") {
-      navigate("/cust");
-    }
+  // useEffect(() => {
+  //   if (sessionStorage["token"] && localStorage["mem_type"] === "cust") {
+  //     navigate("/cust");
+  //   }
     // if (sessionStorage["token"] && localStorage["mem_type"] === "owner") {
     //   navigate("/owner/home");
     // }
-  }, [navigate]);
+  // }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -69,7 +69,7 @@ export default function Login() {
               const type = res.data[0].mem_type;
               if (type === "0") {
                 localStorage.setItem("mem_type", "cust");
-                navigate("/cust");
+                navigate("/cust/home");
               }
               if (type === "1") {
                 localStorage.setItem("mem_type", "owner");

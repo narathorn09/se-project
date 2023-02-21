@@ -28,6 +28,7 @@ import HomeCust from "./HomeCust";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import axios from "axios";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -125,9 +126,9 @@ const Drawer = styled(MuiDrawer, {
 //   },
 // }));
 
-export default function SidebarCust() {
+export default function SidebarCust(prop) {
   let navigate = useNavigate();
-
+  let { index } = prop;
   const tokensend = sessionStorage.getItem("token");
   axios.defaults.headers.common["Authorization"] = `Bearer ${tokensend}`;
 
@@ -135,17 +136,17 @@ export default function SidebarCust() {
     if (!("token" in sessionStorage)) {
       navigate("/login");
     }
-    if (sessionStorage["token"] && localStorage["mem_type"] === "cust") {
-      navigate("/cust");
-    }
-    if (sessionStorage["token"] && localStorage["mem_type"] === "owner") {
-      navigate("/owner");
-    }
+    // if (sessionStorage["token"] && localStorage["mem_type"] === "cust") {
+    //   navigate("/cust/home");
+    // }
+    // if (sessionStorage["token"] && localStorage["mem_type"] === "owner") {
+    //   navigate("/owner/home");
+    // }
   }, []);
 
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [Focus, setFocus] = React.useState(1);
+  const [Focus, setFocus] = React.useState(index);
 
   const changeFocus = (index) => {
     setFocus(index);
@@ -227,66 +228,69 @@ export default function SidebarCust() {
         <List>
           {["ข้อมูลส่วนตัว", "หน้าแรก", "รถเข็น", "รายการสั่งซื้อ"].map(
             (text, index) => (
-              // <Link
-              //   to={(() => {
-              //     if (text === "ข้อมูลส่วนตัว") {
-              //       return "/profile";
-              //     } else if (text === "หน้าแรก") {
-              //       return "/home";
-              //     } else if (text === "รถเข็น") {
-              //       return "/cart";
-              //     } else if (text === "รายการสั่งซื้อ") {
-              //       return "/order";
-              //     }
-              //   })()}
-              //   style={{ textDecoration: "none" }}
-              // >
-              <ListItem
-                onClick={() => changeFocus(index)}
-                key={text}
-                disablePadding
-                sx={{
-                  color: Focus === index ? "#EC6432" : "black",
-                  // backgroundColor: Focus === index ? "black" : "white",
-                }}
+              <Link
+                to={(() => {
+                  if (text === "ข้อมูลส่วนตัว") {
+                    return "/cust/profile";
+                  } else if (text === "หน้าแรก") {
+                    return "/cust/home";
+                  } else if (text === "รถเข็น") {
+                    return "/cust/cart";
+                  } else if (text === "รายการสั่งซื้อ") {
+                    return "/cust/order";
+                  }
+                })()}
+                style={{ textDecoration: "none" }}
               >
-                <ListItemButton
+                <ListItem
+                  onClick={() => changeFocus(index)}
+                  key={text}
+                  disablePadding
                   sx={{
-                    minHeight: 48,
-                    justifyContent: open ? "initial" : "center",
-                    px: 2.5,
+                    color: Focus === index ? "#EC6432" : "black",
+                    // backgroundColor: Focus === index ? "black" : "white",
                   }}
                 >
-                  <ListItemIcon
+                  <ListItemButton
                     sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : "auto",
-                      justifyContent: "center",
-                      color: Focus === index ? "#EC6432" : "black",
+                      minHeight: 48,
+                      justifyContent: open ? "initial" : "center",
+                      px: 2.5,
                     }}
                   >
-                    {/* <StyledBadge
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : "auto",
+                        justifyContent: "center",
+                        color: Focus === index ? "#EC6432" : "black",
+                      }}
+                    >
+                      {/* <StyledBadge
                       overlap="circular"
                       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                       variant="dot"
                     > */}
-                    {(() => {
-                      if (text === "ข้อมูลส่วนตัว") {
-                        return <AccountCircleIcon />;
-                      } else if (text === "หน้าแรก") {
-                        return <HomeIcon />;
-                      } else if (text === "รถเข็น") {
-                        return <ShoppingCartIcon />;
-                      } else if (text === "รายการสั่งซื้อ") {
-                        return <LibraryBooksIcon />;
-                      }
-                    })()}
-                    {/* </StyledBadge> แสดงสถานะแบบจุดสีแดง*/}
-                  </ListItemIcon>
-                  <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                </ListItemButton>
-              </ListItem>
-              // </Link>
+                      {(() => {
+                        if (text === "ข้อมูลส่วนตัว") {
+                          return <AccountCircleIcon />;
+                        } else if (text === "หน้าแรก") {
+                          return <HomeIcon />;
+                        } else if (text === "รถเข็น") {
+                          return <ShoppingCartIcon />;
+                        } else if (text === "รายการสั่งซื้อ") {
+                          return <LibraryBooksIcon />;
+                        }
+                      })()}
+                      {/* </StyledBadge> แสดงสถานะแบบจุดสีแดง*/}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={text}
+                      sx={{ opacity: open ? 1 : 0 }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              </Link>
             )
           )}
         </List>
