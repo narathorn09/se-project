@@ -395,6 +395,20 @@ app.post("/add-menu", authenticateToken, upload.single("file"), (req, res) => {
   });
 });
 
+app.delete("/delete-menu/:id",authenticateToken,  (req, res) => {
+  let id = req.params.id;
+  console.log(id);
+  db.query(`DELETE FROM menu WHERE menu_id=${id}`, (err, result) => {
+    if (result) {
+      console.log(result);
+      res.send(result);
+    } else {
+      console.log(err);
+      res.send(err.data);
+    }
+  });
+});
+
 app.get("/list-menu", authenticateToken, (req, res) => {
   let mem_id = req.user.mem_id;
   db.beginTransaction((err) => {

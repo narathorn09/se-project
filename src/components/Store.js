@@ -20,11 +20,21 @@ const Store = () => {
   const [listMenu, setlistMenu] = useState([]);
   const [file, setFile] = useState([]);
   const [showphoto, setShowphoto] = useState(null);
+  const [editMenu, setEditMenu] = useState(false);
+
+  const [dataMenu, setDataMenu] = useState({
+    id: "",
+    name: "",
+    price: "",
+    photo: [],
+  });
+
+  // const [changePhoto, setChangePhoto] = useState([])
 
   useEffect(() => {
     setnameMenu("");
     setpriceMenu("");
-  }, [saveMenu]);
+  }, [addMenu]);
 
   useEffect(() => {
     axios
@@ -46,18 +56,17 @@ const Store = () => {
     setShowphoto(URL.createObjectURL(e.target.files[0]));
   };
 
+  const changeFile = (e) => {
+    setDataMenu({ photo: e.target.files[0] });
+    // setShowphoto(URL.createObjectURL(e.target.files[0]));
+  };
+
   const handleClick = async () => {
     const formData = new FormData();
     formData.append("menu_name", nameMenu);
     formData.append("menu_price", priceMenu);
     formData.append("file", file);
-    // const data = {
-    //   menu_name: nameMenu,
-    //   menu_price: priceMenu,
-    //   file: file,
-    //   filename: fileName,
-    // };
-    //  console.log(data);
+
     try {
       await axios
         .post("http://localhost:4000/add-menu", formData, {
@@ -66,20 +75,39 @@ const Store = () => {
         .then((res) => {
           setsaveMenu(true);
           alert("เพิ่มเมนูสำเร็จ");
-          // console.log(res.data);
         });
     } catch (err) {
       alert(err.message);
       alert("เกิดข้อผิดพลาด เพิ่มไม่เมนูสำเร็จ");
       console.log(err);
     }
-
     window.location.reload();
-    // axios.post(`http://localhost:4000/add-menu=${username.trim()}`);
   };
-  // console.log(listMenu);
 
-  // const ButtonCancelled = () => {};
+  const buttonEdit = (id, name, price, photo) => {
+    setDataMenu({
+      id: id,
+      name: name,
+      price: price,
+      photo: null,
+    });
+    setEditMenu(true);
+  };
+  console.log(dataMenu);
+
+  const buttonDelete = (id, name) => {
+    const text = `คุณต้องการลบเมนู ${name}?`;
+    const confirmed = window.confirm(text);
+    if (confirmed) {
+      axios
+        .delete(`http://localhost:4000/delete-menu/${id}`)
+        .then((response) => {
+          console.log(response);
+          window.location.reload();
+        });
+    }
+  };
+
   return (
     <>
       <Container sx={{ paddingTop: 5 }}>
@@ -174,12 +202,51 @@ const Store = () => {
                   variant="contained"
                   color="error"
                   sx={{ marginLeft: 1 }}
+                  onClick={() => setaddMenu(false)}
                 >
                   ยกเลิก
                 </Button>
               </Grid>
             </Grid>
             <Divider sx={{ marginTop: 2 }} />
+          </Box>
+        )}
+        {editMenu && (
+          <Box>
+            {" "}
+            <Grid container rowSpacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  id="menu"
+                  label="ชื่อเมนูอาหาร"
+                  name="menu"
+                  autoComplete="menu"
+                  value={dataMenu.name}
+                  onChange={(e) => setDataMenu({ name: e.target.value })}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  type="number"
+                  id="number"
+                  label="ราคา"
+                  name="number"
+                  autoComplete="number"
+                  value={dataMenu.price}
+                  onChange={(e) => setDataMenu({ price: e.target.value })}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  type="file"
+                  id="file"
+                  onChange={changeFile}
+                />
+              </Grid>
+            </Grid>
           </Box>
         )}
         <Grid
@@ -229,10 +296,25 @@ const Store = () => {
                       visibility: "hidden",
                     }}
                   >
-                    <Button variant="contained" color="success">
+                    <Button
+                      variant="contained"
+                      color="success"
+                      onClick={() =>
+                        buttonEdit(
+                          data.menu_id,
+                          data.menu_name,
+                          data.menu_price,
+                          data.menu_photo
+                        )
+                      }
+                    >
                       แก้ไขข้อมูล
                     </Button>
-                    <Button variant="contained" color="error">
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => buttonDelete(data.menu_id, data.menu_name)}
+                    >
                       ลบข้อมูล
                     </Button>
                   </Box>

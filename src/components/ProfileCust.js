@@ -9,11 +9,11 @@ import axios from "axios";
 export default function CardProfile() {
   const [member, setMember] = useState({});
   const type = localStorage["mem_type"];
-  console.log(type)
-  
+  console.log(type);
+
   useEffect(() => {
     axios
-      .post("http://localhost:4000/profile",{ type: type })
+      .post("http://localhost:4000/profile", { type: type })
       .then((response) => {
         setMember(response.data);
         console.log(response.data);
@@ -45,8 +45,7 @@ export default function CardProfile() {
             </Typography>
             <Typography variant="h11">
               ชื่อ-นามสกุล :{" "}
-              {type === "cust" ? member.cust_name : member.owner_name}
-              {" "}
+              {type === "cust" ? member.cust_name : member.owner_name}{" "}
               {type === "cust" ? member.cust_Lname : member.ower_Lname}
             </Typography>
             <Typography>
