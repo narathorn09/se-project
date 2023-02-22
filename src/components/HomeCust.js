@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import * as React from "react";
 import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
@@ -10,11 +11,16 @@ import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-import { Button, Divider } from "@mui/material";
+import { Button, ButtonGroup, Divider } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
+import Modal from "@mui/material/Modal";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 
 export default function HomeCust() {
   let navigate = useNavigate();
@@ -28,6 +34,27 @@ export default function HomeCust() {
   const [nameStore, setnameStore] = useState("");
   const [detailStore, setdetailStore] = useState("");
   const [listMenu, setlistMenu] = useState([]);
+
+  const [openModal, setopenModal] = useState(false);
+  const [dataOnModal, setdataOnModal] = useState({
+    menu_name: "",
+    menu_price: "",
+    menu_photo: "",
+  });
+
+  let [numMenu, setnumMenu] = useState(1);
+  const numUP = () => {
+    setnumMenu((numMenu += 1));
+  };
+  const numDOWN = () => {
+    if (numMenu > 1) setnumMenu((numMenu -= 1));
+  };
+
+  const [typeMenu, setTypeMenu] = useState("dish");
+
+  const handleChange = (type) => {
+    setTypeMenu(type);
+  };
 
   useEffect(() => {
     //เลือก Checkbox ทั้งสองช่องหรือ ไม่ได้เลือกทั้งสอง
@@ -86,7 +113,6 @@ export default function HomeCust() {
   }, [search, Checkbox_1, Checkbox_2]);
 
   const selectStore = async (id) => {
-    setidStore(1);
     const data = {
       store_id: id,
     };
@@ -110,6 +136,35 @@ export default function HomeCust() {
       .catch((err) => {
         console.log(err);
       });
+    setidStore(1);
+  };
+
+  const selectMenu = (name, price, photo, e) => {
+    e.preventDefault();
+    setopenModal(true);
+    setdataOnModal({
+      menu_name: name,
+      menu_price: price,
+      menu_photo: photo,
+    });
+  };
+  // console.log(dataOnModal);
+
+  const closeModal = () => {
+    setopenModal(false);
+  };
+
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "50%",
+    height: "auto",
+    bgcolor: "background.paper",
+    borderRadius: "5px",
+    boxShadow: 2,
+    p: 4,
   };
 
   return (
@@ -283,11 +338,21 @@ export default function HomeCust() {
                           marginTop: 2,
                           display: "grid",
                           columnGap: 1,
-                          // gridTemplateColumns: "repeat(2, 1fr)",
                           visibility: "hidden",
                         }}
                       >
-                        <Button variant="contained" color="success">
+                        <Button
+                          variant="contained"
+                          color="success"
+                          onClick={(e) =>
+                            selectMenu(
+                              data.menu_name,
+                              data.menu_price,
+                              data.menu_photo,
+                              e
+                            )
+                          }
+                        >
                           สั่งซื้อ
                         </Button>
                       </Box>
@@ -297,6 +362,96 @@ export default function HomeCust() {
               ))}
             </Grid>
           </Box>
+        )}
+        {openModal && (
+          <Modal open={openModal} onClose={closeModal}>
+            <Grid container sx={style}>
+              <Grid xs={4}>
+                <CardMedia
+                  sx={{ padding: 1 }}
+                  component="img"
+                  height="140"
+                  src={require(`../../uploads/${dataOnModal.menu_photo}`)}
+                  alt="food menu"
+                />
+              </Grid>
+              <Grid xs={6} sx={{ marginLeft: "5%" }}>
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                  {dataOnModal.menu_name}
+                </Typography>
+                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                  {dataOnModal.menu_price} บาท
+                </Typography>
+                <Typography variant="body" sx={{ mr: 2 }}>
+                  จำนวน
+                </Typography>
+                <ButtonGroup
+                  variant="contained"
+                  aria-label="outlined primary button group"
+                >
+                  <Button onClick={numDOWN}>
+                    <RemoveIcon />
+                  </Button>
+                  <Button>{numMenu}</Button>
+                  <Button onClick={numUP}>
+                    <AddIcon />
+                  </Button>
+                </ButtonGroup>
+                <ToggleButtonGroup
+                  sx={{
+                    backgroundColor: "primary",
+                    color: "primary",
+                    height: 40,
+                    marginLeft: 1,
+                  }}
+                  value={typeMenu}
+                  exclusive
+                  onChange={(e) => handleChange(e.target.value)}
+                  aria-label="Platform"
+                >
+                  <ToggleButton
+                    value="dish"
+                    style={{
+                      backgroundColor: typeMenu === "dish" ? "#1a1a1a" : null,
+                      color: typeMenu === "dish" ? "white" : null,
+                    }}
+                  >
+                    จาน
+                  </ToggleButton>
+                  <ToggleButton
+                    value="pack"
+                    style={{
+                      backgroundColor: typeMenu === "pack" ? "#1a1a1a" : null,
+                      color: typeMenu === "pack" ? "white" : null,
+                    }}
+                  >
+                    ห่อ
+                  </ToggleButton>
+                </ToggleButtonGroup>
+                <Box
+                  sx={{
+                    width: "100%",
+                    // marginLeft: 10,
+                    marginTop: 2,
+                    display: "grid",
+                    columnGap: 1,
+                    gridTemplateColumns: "repeat(2, 1fr)",
+                  }}
+                >
+                  <Button variant="contained" color="success">
+                    เพิ่มไปยังตะกร้า
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={closeModal}
+                  >
+                    ยกเลิก
+                  </Button>
+                </Box>
+              </Grid>
+            </Grid>
+          </Modal>
         )}
       </Container>
     </>
