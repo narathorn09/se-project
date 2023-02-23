@@ -35,14 +35,18 @@ export default function HomeCust() {
   const [detailStore, setdetailStore] = useState("");
   const [listMenu, setlistMenu] = useState([]);
 
+  let [numMenu, setnumMenu] = useState(1);
+  const [typeMenu, setTypeMenu] = useState("dish");
+
   const [openModal, setopenModal] = useState(false);
   const [dataOnModal, setdataOnModal] = useState({
+    store_id: 0,
+    menu_id: 0,
     menu_name: "",
-    menu_price: "",
+    menu_price: 0,
     menu_photo: "",
   });
 
-  let [numMenu, setnumMenu] = useState(1);
   const numUP = () => {
     setnumMenu((numMenu += 1));
   };
@@ -50,11 +54,56 @@ export default function HomeCust() {
     if (numMenu > 1) setnumMenu((numMenu -= 1));
   };
 
-  const [typeMenu, setTypeMenu] = useState("dish");
-
   const handleChange = (type) => {
     setTypeMenu(type);
   };
+
+  const addtoCart = () => {
+    const newData = {
+      store_id: dataOnModal.store_id,
+      menu_id: dataOnModal.menu_id,
+      menu_name: dataOnModal.menu_name,
+      menu_price: dataOnModal.menu_price,
+      menu_photo: dataOnModal.menu_photo,
+      menu_num: numMenu,
+      menu_type: typeMenu,
+    };
+    // console.log(newData);
+    // setdataInCart(newData);
+    addToLocalStorage(newData);
+    alert("เพิ่มไปยังรถเข็นสำเร็จ")
+    closeModal()
+    // setidStore(1);
+    // window.location.reload()
+  };
+
+  const addToLocalStorage = (newData) => {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    // Check if the same menu_id already exists in the cart array
+    const existingIndex = cart.findIndex(
+      (item) =>
+        item.menu_id === newData.menu_id && item.menu_type === newData.menu_type
+    );
+
+    if (existingIndex !== -1) {
+      // If the same menu_id already exists, check if the menu_type is different
+      if (cart[existingIndex].menu_type !== newData.menu_type) {
+        // If the menu_type is different, add the new data to the end of the array
+        cart.push(newData);
+      } else {
+        // Otherwise, add the new menu_num to the existing menu_num
+        cart[existingIndex].menu_num += newData.menu_num;
+      }
+    } else {
+      // Otherwise, add the new data to the end of the array
+      cart.push(newData);
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+  };
+
+  // console.log(dataInCart);
 
   useEffect(() => {
     //เลือก Checkbox ทั้งสองช่องหรือ ไม่ได้เลือกทั้งสอง
@@ -66,7 +115,7 @@ export default function HomeCust() {
         const data = {
           store_name: search,
         };
-        console.log(data);
+        // console.log(data);
         axios.post("http://localhost:4000/store-all", data).then((response) => {
           setAlldata(response.data);
         });
@@ -82,7 +131,7 @@ export default function HomeCust() {
           store_name: search,
           store_religion: "0",
         };
-        console.log(data);
+        // console.log(data);
         axios
           .post("http://localhost:4000/store-search", data)
           .then((response) => {
@@ -100,7 +149,7 @@ export default function HomeCust() {
           store_name: search,
           store_religion: "1",
         };
-        console.log(data);
+        // console.log(data);
         axios
           .post("http://localhost:4000/store-search", data)
           .then((response) => {
@@ -120,7 +169,7 @@ export default function HomeCust() {
     await axios
       .post("http://localhost:4000/store-select", data)
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setnameStore(res.data[0].store_name);
         setdetailStore(res.data[0].store_details);
       })
@@ -139,19 +188,21 @@ export default function HomeCust() {
     setidStore(1);
   };
 
-  const selectMenu = (name, price, photo, e) => {
-    e.preventDefault();
+  const selectMenu = (sid, mid, name, price, photo) => {
     setopenModal(true);
     setdataOnModal({
+      store_id: sid,
+      menu_id: mid,
       menu_name: name,
       menu_price: price,
       menu_photo: photo,
     });
   };
-  // console.log(dataOnModal);
 
   const closeModal = () => {
     setopenModal(false);
+    setTypeMenu("dish");
+    setnumMenu(1);
   };
 
   const style = {
@@ -346,6 +397,8 @@ export default function HomeCust() {
                           color="success"
                           onClick={(e) =>
                             selectMenu(
+                              data.store_id,
+                              data.menu_id,
                               data.menu_name,
                               data.menu_price,
                               data.menu_photo,
@@ -366,7 +419,7 @@ export default function HomeCust() {
         {openModal && (
           <Modal open={openModal} onClose={closeModal}>
             <Grid container sx={style}>
-              <Grid xs={4}>
+              <Grid item xs={4}>
                 <CardMedia
                   sx={{ padding: 1 }}
                   component="img"
@@ -375,7 +428,7 @@ export default function HomeCust() {
                   alt="food menu"
                 />
               </Grid>
-              <Grid xs={6} sx={{ marginLeft: "5%" }}>
+              <Grid item xs={6} sx={{ marginLeft: "5%" }}>
                 <Typography id="modal-modal-title" variant="h6" component="h2">
                   {dataOnModal.menu_name}
                 </Typography>
@@ -438,13 +491,17 @@ export default function HomeCust() {
                     gridTemplateColumns: "repeat(2, 1fr)",
                   }}
                 >
-                  <Button variant="contained" color="success">
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={() => addtoCart()}
+                  >
                     เพิ่มไปยังตะกร้า
                   </Button>
                   <Button
                     variant="contained"
                     color="error"
-                    onClick={closeModal}
+                    onClick={() => closeModal()}
                   >
                     ยกเลิก
                   </Button>

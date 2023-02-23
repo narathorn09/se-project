@@ -21,7 +21,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import HomeIcon from "@mui/icons-material/Home";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
-// import Badge from "@mui/material/Badge";
+import Badge from "@mui/material/Badge";
 import CardProfile from "./Profile";
 import CustomizedTables from "./Table";
 import HomeCust from "./HomeCust";
@@ -29,6 +29,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import Cart from "./Cart";
 
 const drawerWidth = 240;
 
@@ -97,34 +98,34 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
-// const StyledBadge = styled(Badge)(({ theme }) => ({
-//   "& .MuiBadge-badge": {
-//     backgroundColor: "#FF0000",
-//     color: "#FF0000",
-//     boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-//     "&::after": {
-//       position: "absolute",
-//       top: 0,
-//       left: 0,
-//       width: "100%",
-//       height: "100%",
-//       borderRadius: "50%",
-//       animation: "ripple 1.2s infinite ease-in-out",
-//       border: "1px solid currentColor",
-//       content: '""',
-//     },
-//   },
-//   "@keyframes ripple": {
-//     "0%": {
-//       transform: "scale(.8)",
-//       opacity: 1,
-//     },
-//     "100%": {
-//       transform: "scale(2.4)",
-//       opacity: 0,
-//     },
-//   },
-// }));
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  "& .MuiBadge-badge": {
+    backgroundColor: "#FF0000",
+    color: "#FF0000",
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    "&::after": {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      borderRadius: "50%",
+      animation: "ripple 1.2s infinite ease-in-out",
+      border: "1px solid currentColor",
+      content: '""',
+    },
+  },
+  "@keyframes ripple": {
+    "0%": {
+      transform: "scale(.8)",
+      opacity: 1,
+    },
+    "100%": {
+      transform: "scale(2.4)",
+      opacity: 0,
+    },
+  },
+}));
 
 export default function SidebarCust(prop) {
   let navigate = useNavigate();
@@ -267,11 +268,6 @@ export default function SidebarCust(prop) {
                         color: Focus === index ? "#EC6432" : "black",
                       }}
                     >
-                      {/* <StyledBadge
-                      overlap="circular"
-                      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                      variant="dot"
-                    > */}
                       {(() => {
                         if (text === "ข้อมูลส่วนตัว") {
                           return <AccountCircleIcon />;
@@ -283,7 +279,16 @@ export default function SidebarCust(prop) {
                           return <LibraryBooksIcon />;
                         }
                       })()}
-                      {/* </StyledBadge> แสดงสถานะแบบจุดสีแดง*/}
+                      {localStorage["cart"] && text === "รถเข็น" && (
+                        <StyledBadge
+                          overlap="circular"
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "right",
+                          }}
+                          variant="dot"
+                        />
+                      )}
                     </ListItemIcon>
                     <ListItemText
                       primary={text}
@@ -306,7 +311,7 @@ export default function SidebarCust(prop) {
           } else if (Focus === 1) {
             return <HomeCust />;
           } else if (Focus === 2) {
-            return <ShoppingCartIcon />;
+            return <Cart />;
           } else if (Focus === 3) {
             return <CustomizedTables />;
           }

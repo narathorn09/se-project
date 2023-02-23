@@ -15,7 +15,7 @@ const Store = () => {
 
   const [addMenu, setaddMenu] = useState(false);
   const [nameMenu, setnameMenu] = useState("");
-  const [priceMenu, setpriceMenu] = useState("");
+  const [priceMenu, setpriceMenu] = useState(0);
   const [listMenu, setlistMenu] = useState([]);
   const [file, setFile] = useState([]);
   const [showphoto, setShowphoto] = useState(null);
