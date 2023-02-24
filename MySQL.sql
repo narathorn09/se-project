@@ -1,6 +1,6 @@
 CREATE TABLE member (
     mem_id int AUTO_INCREMENT,
-    mem_type varchar(50),
+    mem_type varchar(2),
     mem_username varchar(50),
     mem_password varchar(255),
     PRIMARY KEY (mem_id)
@@ -58,7 +58,7 @@ CREATE TABLE orders (
     order_qwaiting int,
     order_cookingstatus varchar(20),
     PRIMARY KEY (order_id),
-    FOREIGN KEY (cust_id) REFERENCES customer(cust_id)
+    FOREIGN KEY (cust_id) REFERENCES customer(cust_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE orderdetail (
@@ -66,6 +66,6 @@ CREATE TABLE orderdetail (
     menu_id int,
     menu_amount int,
     menu_type varchar(10),
-    FOREIGN KEY (order_id) REFERENCES orders(order_id),
-    FOREIGN KEY (menu_id) REFERENCES menu(menu_id)
+    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (menu_id) REFERENCES menu(menu_id) ON UPDATE CASCADE ON DELETE CASCADE
 );

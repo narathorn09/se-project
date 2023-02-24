@@ -61,6 +61,7 @@ export default function HomeCust() {
   const addtoCart = () => {
     const newData = {
       store_id: dataOnModal.store_id,
+      store_name: nameStore,
       menu_id: dataOnModal.menu_id,
       menu_name: dataOnModal.menu_name,
       menu_price: dataOnModal.menu_price,
@@ -220,7 +221,7 @@ export default function HomeCust() {
 
   return (
     <>
-      <Container sx={{ paddingTop: 8 }}>
+      <Container sx={{ paddingTop: 5 }}>
         {idStore === 0 && (
           <Box>
             <TextField

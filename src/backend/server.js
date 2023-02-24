@@ -359,6 +359,94 @@ app.post("/list-menu-store-select", (req, res) => {
 //       }
 //     });
 //   };
+// page Cart ################################################################################################
+app.post("/cust-order", authenticateToken, (req, res) => {
+  console.log(req.body);
+  let mem_id = req.user.mem_id;
+
+  db.beginTransaction((err) => {
+    if (err) {
+      res.json({
+        status: "400",
+        message: "Error starting transaction",
+      });
+    }
+    let query1 = `SELECT cust_id FROM customer where mem_id=${mem_id}`;
+
+    db.query(query1, (err, result1) => {
+      if (err) {
+        db.rollback(() => {
+          res.json({
+            status: "400",
+            message: "Error get cust_id from customer table",
+          });
+        });
+      }
+      let total_price = req.query.total_price;
+      let cust_id = result1[0].cust_id;
+      const orderSql =
+        "INSERT INTO orders (cust_id , order_price, order_status, order_qwaiting, order_cookingstatus) VALUES (?, ?, ?, ?, ?)";
+      const orderValues = [cust_id, total_price, null, null, null];
+      db.query(orderSql, orderValues, (err, result2) => {
+        if (err) {
+          db.rollback(() => {
+            res.json({
+              status: "400",
+              message: "Error insert data into orders table",
+            });
+          });
+        }
+        let order_id = result2.insertId;
+        const orderdetailSql =
+          "INSERT INTO orderdetail (order_id , menu_id, menu_amount, menu_type) VALUES (?, ?, ?, ?)";
+        let errorFlag = false; // flag to keep track of errors
+        let numProcessed = 0; // counter to keep track of number of items processed
+        for (let i = 0; i < req.body.length; i++) {
+          let orderdetailValues = [
+            order_id,
+            req.body[i].menu_id,
+            req.body[i].menu_num,
+            req.body[i].menu_type,
+          ];
+          db.query(orderdetailSql, orderdetailValues, (err, results) => {
+            if (err) {
+              db.rollback(() => {
+                errorFlag = true;
+                res.json({
+                  status: "400",
+                  message: "Error inserting data into orderdetail table",
+                });
+              });
+            }
+            numProcessed++;
+            if (numProcessed === req.body.length) {
+              if (errorFlag) {
+                db.rollback(() => {
+                  return;
+                });
+              }
+              db.commit((err) => {
+                if (err) {
+                  db.rollback(() => {
+                    res.json({
+                      status: "400",
+                      message: "Error committing transaction",
+                    });
+                  });
+                }
+
+                res.json({
+                  status: "200",
+                  message: "Insertion order and orderdetail successful",
+                });
+              });
+            }
+          });
+        }
+      });
+    });
+  });
+});
 
 // page stroe ################################################################################################
 
@@ -445,9 +533,9 @@ app.post("/add-menu", authenticateToken, upload.single("file"), (req, res) => {
   });
 });
 
-app.delete("/delete-menu/:id", authenticateToken, (req, res) => {
+app.delete("/delete-menu/:id", (req, res) => {
   let id = req.params.id;
-  console.log(id);
+  console.log("id",id);
   db.query(`DELETE FROM menu WHERE menu_id=${id}`, (err, result) => {
     if (result) {
       console.log(result);

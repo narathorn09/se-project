@@ -21,43 +21,46 @@ export default function CardProfile() {
   }, [type]);
 
   return (
-    <Box sx={{ width: "100%", height: "100%", boxShadow: 3 }}>
-      <Container sx={{ paddingTop: 8 }}>
-        <Grid
-          container
-          direction="row"
-          justifyContent="space-around"
-          alignItems="center"
-        >
-          <Grid item xs={1}>
-            <Avatar
-              alt="profile"
-              src="/static/images/avatar/1.jpg"
-              sx={{
-                width: [100, 200, 300],
-                height: [100, 200, 300],
-              }}
-            />
+    <Container sx={{ paddingTop: 5 }}>
+      <Box sx={{ width: "100%", height: "100%", boxShadow: 3 ,padding: 5}}>
+
+          <Grid
+            container
+            direction="row"
+            justifyContent="space-around"
+            alignItems="center"
+          >
+            <Grid item xs={1}>
+              <Avatar
+                alt="profile"
+                src="/static/images/avatar/1.jpg"
+                sx={{
+                  width: [100, 200, 300],
+                  height: [100, 200, 300],
+                }}
+              />
+            </Grid>
+            <Grid item xs={5}>
+              <Typography variant="h4">
+                ประเภทสมาชิก : {type === "cust" ? "ลูกค้า" : "เจ้าของร้าน"}
+              </Typography>
+              <Typography variant="h11">
+                ชื่อ-นามสกุล :{" "}
+                {type === "cust" ? member.cust_name : member.owner_name}{" "}
+                {type === "cust" ? member.cust_Lname : member.ower_Lname}
+              </Typography>
+              <Typography>
+                Email :{" "}
+                {type === "cust" ? member.cust_email : member.owner_email}
+              </Typography>
+              <Typography>
+                เบอร์มือถือ :{" "}
+                {type === "cust" ? member.cust_tel : member.owner_tel}
+              </Typography>
+            </Grid>
           </Grid>
-          <Grid item xs={5}>
-            <Typography variant="h4">
-              ประเภทสมาชิก : {type === "cust" ? "ลูกค้า" : "เจ้าของร้าน"}
-            </Typography>
-            <Typography variant="h11">
-              ชื่อ-นามสกุล :{" "}
-              {type === "cust" ? member.cust_name : member.owner_name}{" "}
-              {type === "cust" ? member.cust_Lname : member.ower_Lname}
-            </Typography>
-            <Typography>
-              Email : {type === "cust" ? member.cust_email : member.owner_email}
-            </Typography>
-            <Typography>
-              เบอร์มือถือ :{" "}
-              {type === "cust" ? member.cust_tel : member.owner_tel}
-            </Typography>
-          </Grid>
-        </Grid>
-      </Container>
-    </Box>
+       
+      </Box>
+    </Container>
   );
 }

@@ -161,6 +161,8 @@ export default function SidebarCust(prop) {
     setOpen(false);
   };
 
+  let cart = JSON.parse(localStorage.getItem("cart"));
+  console.log(cart);
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -279,7 +281,7 @@ export default function SidebarCust(prop) {
                           return <LibraryBooksIcon />;
                         }
                       })()}
-                      {localStorage["cart"] && text === "รถเข็น" && (
+                      {cart && cart.length > 0 && text === "รถเข็น" && (
                         <StyledBadge
                           overlap="circular"
                           anchorOrigin={{
