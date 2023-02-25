@@ -361,7 +361,7 @@ app.post("/list-menu-store-select", (req, res) => {
 //   };
 // page Cart ################################################################################################
 app.post("/cust-add-order", authenticateToken, (req, res) => {
-  console.log(req.body);
+  console.log(req.body[0].store_id);
   let mem_id = req.user.mem_id;
 
   db.beginTransaction((err) => {
@@ -384,9 +384,10 @@ app.post("/cust-add-order", authenticateToken, (req, res) => {
       }
       let total_price = req.query.total_price;
       let cust_id = result1[0].cust_id;
+      let store_id = req.body[0].store_id;
       const orderSql =
-        "INSERT INTO orders (cust_id , order_price, order_status, order_qwaiting, order_cookingstatus) VALUES (?, ?, ?, ?, ?)";
-      const orderValues = [cust_id, total_price, null, null, null];
+        "INSERT INTO orders (cust_id, store_id, order_price, order_status, order_qwaiting, order_cookingstatus) VALUES (?, ?, ?, ?, ?, ?)";
+      const orderValues = [cust_id, store_id, total_price, "0", 0, "0"];
       db.query(orderSql, orderValues, (err, result2) => {
         if (err) {
           db.rollback(() => {
@@ -516,6 +517,21 @@ app.get("/menu-name/:menu_id", (req, res) => {
   let menu_id = req.params.menu_id;
   db.query(
     `SELECT menu_name FROM menu WHERE menu_id=${menu_id}`,
+    (err, result) => {
+      if (result) {
+        res.send(result);
+      } else {
+        res.send(err.data);
+      }
+    }
+  );
+});
+
+app.get("/store-name/:store_id", (req, res) => {
+  let store_id = req.params.store_id;
+  console.log("store_id =", store_id);
+  db.query(
+    `SELECT store_name FROM store WHERE store_id=${store_id}`,
     (err, result) => {
       if (result) {
         res.send(result);

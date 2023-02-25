@@ -53,12 +53,14 @@ CREATE TABLE menu (
 CREATE TABLE orders (
     order_id int AUTO_INCREMENT,
     cust_id int,
+    store_id int,
     order_status varchar(20),
     order_price int,
     order_qwaiting int,
     order_cookingstatus varchar(20),
     PRIMARY KEY (order_id),
-    FOREIGN KEY (cust_id) REFERENCES customer(cust_id) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (cust_id) REFERENCES customer(cust_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (store_id) REFERENCES store(store_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE orderdetail (

@@ -7,13 +7,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import {
-  Button,
-  Container,
-  Grid,
-  IconButton,
-  Typography,
-} from "@mui/material";
+import { Button, Container, Grid, IconButton, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 
@@ -84,14 +78,15 @@ export default function Cart() {
           },
         })
         .then((response) => {
+          console.log(response.data);
           localStorage.removeItem("cart");
-          localStorage.setItem("order", "have")
+          localStorage.setItem("order", "have");
           window.location.reload();
           alert("ยืนยันคำสั่งซื้อสำเร็จ");
-          console.log(response.data);
         });
     }
   };
+  console.log(dataInCart);
 
   return (
     <Container sx={{ paddingTop: 5 }}>

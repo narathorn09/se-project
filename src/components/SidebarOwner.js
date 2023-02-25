@@ -29,6 +29,7 @@ import { Button } from "@mui/material";
 import axios from "axios";
 import Store from "./Store";
 import { Link } from "react-router-dom";
+import OrderOwner from "./OrderOwner";
 
 const drawerWidth = 240;
 
@@ -306,7 +307,7 @@ export default function SidebarOwner(prop) {
           } else if (Focus === 1) {
             return <Store />;
           } else if (Focus === 2) {
-            return <ShoppingCartIcon />;
+            return <OrderOwner />;
           } else if (Focus === 3) {
             return ;
           }
