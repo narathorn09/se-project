@@ -53,6 +53,9 @@ export default function OrderCust() {
   useEffect(() => {
     axios.post("http://localhost:4000/list-order").then((response) => {
       setlistOrder(response.data);
+      if (response.data.length === 0) {
+        localStorage.removeItem("order");
+      }
     });
   }, []);
 
@@ -150,7 +153,11 @@ export default function OrderCust() {
           {dataOnModal.map((data, index) => {
             return (
               <Grid item xs={12} key={index}>
-                {menuNames[index]} {data.menu_amount} {data.menu_type === "dish" ? "จาน" : "ห่อ"}
+                {index === 0 ? (
+                  <Typography>หมายเลขคำสั่งซื้อ : {data.order_id}</Typography>
+                ) : null}
+                {index+1+")"} {menuNames[index]} {data.menu_amount}{" "}
+                {data.menu_type === "dish" ? "จาน" : "ห่อ"}
               </Grid>
             );
           })}

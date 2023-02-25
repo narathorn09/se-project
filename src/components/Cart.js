@@ -85,6 +85,7 @@ export default function Cart() {
         })
         .then((response) => {
           localStorage.removeItem("cart");
+          localStorage.setItem("order", "have")
           window.location.reload();
           alert("ยืนยันคำสั่งซื้อสำเร็จ");
           console.log(response.data);
@@ -124,7 +125,7 @@ export default function Cart() {
                           height="100"
                           src={require(`../../uploads/${row.menu_photo}`)}
                           alt="food menu"
-                        />{" "}
+                        />
                       </StyledTableCell>
                       <StyledTableCell align="left">
                         {row.menu_name}

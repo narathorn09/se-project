@@ -162,7 +162,7 @@ export default function SidebarCust(prop) {
   };
 
   let cart = JSON.parse(localStorage.getItem("cart"));
-  console.log(cart);
+  let order = localStorage.getItem("order");
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -282,6 +282,16 @@ export default function SidebarCust(prop) {
                         }
                       })()}
                       {cart && cart.length > 0 && text === "รถเข็น" && (
+                        <StyledBadge
+                          overlap="circular"
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "right",
+                          }}
+                          variant="dot"
+                        />
+                      )}
+                      {order === "have" && text === "รายการสั่งซื้อ" && (
                         <StyledBadge
                           overlap="circular"
                           anchorOrigin={{
