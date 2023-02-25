@@ -9,7 +9,6 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import {
   Button,
-  CardMedia,
   Container,
   Grid,
   IconButton,
@@ -44,7 +43,6 @@ export default function Cart() {
   }
 
   const [dataInCart, setdataInCart] = useState([]);
-  const [dataConfirm, setdataConfirm] = useState([]);
 
   let cart = JSON.parse(localStorage.getItem("cart"));
 
@@ -76,18 +74,22 @@ export default function Cart() {
   });
 
   const OrderConfirm = async () => {
-   await axios
-      .post("http://localhost:4000/cust-order", dataInCart, {
-        params: {
-          total_price: totalPrice,
-        },
-      })
-      .then((response) => {
-        localStorage.removeItem("cart")
-        window.location.reload()
-        alert("ยืนยันคำสั่งซื้อสำเร็จ")
-        console.log(response.data);
-      });
+    const text = `คุณต้องการยืนยันคำสั่งซื้อราคารวม ${totalPrice} บาท?`;
+    const confirmed = window.confirm(text);
+    if (confirmed) {
+      await axios
+        .post("http://localhost:4000/cust-add-order", dataInCart, {
+          params: {
+            total_price: totalPrice,
+          },
+        })
+        .then((response) => {
+          localStorage.removeItem("cart");
+          window.location.reload();
+          alert("ยืนยันคำสั่งซื้อสำเร็จ");
+          console.log(response.data);
+        });
+    }
   };
 
   return (
@@ -187,6 +189,7 @@ export default function Cart() {
                           variant="contained"
                           color="success"
                           onClick={() => OrderConfirm()}
+                          disabled={totalPrice === 0 ? true : false}
                         >
                           ยินยันคำสั่งซื้อ
                         </Button>
@@ -194,11 +197,6 @@ export default function Cart() {
                     </Grid>
                   </StyledTableCell>
                 </StyledTableRow>
-                {/* {cart.length === 0 && (
-                  <Container>
-                    <p>ไม่มีสินค้าในรถเข็น</p>
-                  </Container>
-                )} */}
               </TableBody>
             </Table>
           </TableContainer>

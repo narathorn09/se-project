@@ -360,7 +360,7 @@ app.post("/list-menu-store-select", (req, res) => {
 //     });
 //   };
 // page Cart ################################################################################################
-app.post("/cust-order", authenticateToken, (req, res) => {
+app.post("/cust-add-order", authenticateToken, (req, res) => {
   console.log(req.body);
   let mem_id = req.user.mem_id;
 
@@ -447,7 +447,84 @@ app.post("/cust-order", authenticateToken, (req, res) => {
     });
   });
 });
+// page OrderCust ################################################################################################
+app.post("/list-order", authenticateToken, (req, res) => {
+  let mem_id = req.user.mem_id;
+  db.beginTransaction((err) => {
+    if (err) {
+      res.json({
+        status: "400",
+        message: "Error starting transaction",
+      });
+    }
+    let query1 = `SELECT cust_id FROM customer where mem_id=${mem_id}`;
 
+    db.query(query1, (err, result1) => {
+      if (err) {
+        db.rollback(() => {
+          res.json({
+            status: "400",
+            message: "Error get cust_id from customer table",
+          });
+        });
+      }
+      let cust_id = result1[0].cust_id;
+      const listorderSql = `SELECT * FROM orders WHERE cust_id=${cust_id}`;
+      db.query(listorderSql, (err, result2) => {
+        if (err) {
+          db.rollback(() => {
+            res.json({
+              status: "400",
+              message: "Error get data from orders table",
+            });
+          });
+        }
+        console.log(result2);
+
+        db.commit((err) => {
+          if (err) {
+            db.rollback(() => {
+              res.json({
+                status: "400",
+                message: "Error committing transaction",
+              });
+            });
+          }
+
+          res.json(result2);
+        });
+      });
+    });
+  });
+});
+
+app.get("/orderdetail/:order_id", (req, res) => {
+  let order_id = req.params.order_id;
+  db.query(
+    `SELECT * FROM orderdetail WHERE order_id=${order_id}`,
+    (err, result) => {
+      if (result) {
+        res.send(result);
+      } else {
+        res.send(err.data);
+      }
+    }
+  );
+});
+
+app.get("/menu-name/:menu_id", (req, res) => {
+  let menu_id = req.params.menu_id;
+  db.query(
+    `SELECT menu_name FROM menu WHERE menu_id=${menu_id}`,
+    (err, result) => {
+      if (result) {
+        res.send(result);
+      } else {
+        res.send(err.data);
+      }
+    }
+  );
+});
 // page stroe ################################################################################################
 
 const storage = multer.diskStorage({
@@ -535,7 +612,7 @@ app.post("/add-menu", authenticateToken, upload.single("file"), (req, res) => {
 
 app.delete("/delete-menu/:id", (req, res) => {
   let id = req.params.id;
-  console.log("id",id);
+  console.log("id", id);
   db.query(`DELETE FROM menu WHERE menu_id=${id}`, (err, result) => {
     if (result) {
       console.log(result);

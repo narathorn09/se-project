@@ -24,7 +24,6 @@ import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import StoreIcon from "@mui/icons-material/Store";
 import HourglassTopIcon from "@mui/icons-material/HourglassTop";
 import CardProfile from "./Profile";
-import CustomizedTables from "./Table";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import axios from "axios";
@@ -309,7 +308,7 @@ export default function SidebarOwner(prop) {
           } else if (Focus === 2) {
             return <ShoppingCartIcon />;
           } else if (Focus === 3) {
-            return <CustomizedTables />;
+            return ;
           }
         })()}
       </Box>

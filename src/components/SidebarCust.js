@@ -23,13 +23,13 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import Badge from "@mui/material/Badge";
 import CardProfile from "./Profile";
-import CustomizedTables from "./Table";
 import HomeCust from "./HomeCust";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import Cart from "./Cart";
+import OrderCust from "./OrderCust";
 
 const drawerWidth = 240;
 
@@ -315,7 +315,7 @@ export default function SidebarCust(prop) {
           } else if (Focus === 2) {
             return <Cart />;
           } else if (Focus === 3) {
-            return <CustomizedTables />;
+            return <OrderCust />;
           }
         })()}
       </Box>
