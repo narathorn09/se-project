@@ -62,10 +62,9 @@ export default function OrderCust() {
       setListupdates(!listupdates);
     });
   }, []);
-console.table(listOrder);
+
   useEffect(() => {
     const fetchData = async () => {
-      console.log("store", storeNames);
       const names = await Promise.all(
         listOrder.map(async (data) => {
           const response = await axios.get(
@@ -78,7 +77,7 @@ console.table(listOrder);
     };
     fetchData();
   }, [listupdates]);
-  
+
   useEffect(() => {
     const fetchData = async () => {
       const names = await Promise.all(
@@ -106,7 +105,37 @@ console.table(listOrder);
   const closeModal = () => {
     setshowModal(false);
   };
-// console.log(listOrder);
+
+  const cancelOrder = async (order_id) => {
+    const text = `คุณต้องการยกเลิกคำสั่งซื้อ หมายเลข${order_id}?`;
+    const confirmed = window.confirm(text);
+    if (confirmed) {
+      await axios
+        .delete(`http://localhost:4000/cancel-order/${order_id}`)
+        .then((response) => {
+          window.location.reload();
+        });
+    }
+  };
+
+  const [Qorder, setQorder] = useState([]);
+
+  useEffect(() => {
+    const Queue = async () => {
+      const q = await Promise.all(
+        listOrder.map(async (data) => {
+          const response = await axios.post(`http://localhost:4000/queue`, {
+            order_id: data.order_id,
+            store_id: data.store_id,
+          });
+          return response.data.q;
+        })
+      );
+      setQorder(q);
+    };
+    Queue();
+  }, [listOrder]);
+
   return (
     <Container sx={{ paddingTop: 5 }}>
       <Grid container columnGap={2}>
@@ -146,9 +175,23 @@ console.table(listOrder);
                       <StyledTableCell align="center">
                         {(() => {
                           if (row.order_status === "0") {
-                            return "ยังไม่ยืนยัน";
+                            return (
+                              <Typography sx={{ color: "orange" }}>
+                                ยังไม่ยืนยัน
+                              </Typography>
+                            );
                           } else if (row.order_status === "1") {
-                            return "ยืนยันแล้ว";
+                            return (
+                              <Typography sx={{ color: "green" }}>
+                                ยืนยันแล้ว
+                              </Typography>
+                            );
+                          } else if (row.order_status === "2") {
+                            return (
+                              <Typography sx={{ color: "red" }}>
+                                ถูกยกเลิก
+                              </Typography>
+                            );
                           }
                         })()}
                       </StyledTableCell>
@@ -175,14 +218,36 @@ console.table(listOrder);
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         {row.order_status === "0" && (
-                          <Button variant="contained" color="error">
+                          <Button
+                            variant="contained"
+                            color="error"
+                            onClick={() => cancelOrder(row.order_id)}
+                          >
                             ยกเลิกคำสั่งซื้อ
                           </Button>
                         )}
-                        {row.order_status !== "0" && (
+                        {(() => {
+                          if (row.order_status === "1") {
+                            if (row.order_cookingstatus === "2") {
+                              return (
+                                <Box>
+                                  <Box>กรุณาไปรับอารหาร</Box>
+                                </Box>
+                              );
+                            } else {
+                              return (
+                                <Box>
+                                  <Box>ลำดับคิวที่ {row.order_id}</Box>
+                                  <Box>จำนวนคิวที่รอ {Qorder[index]}</Box>
+                                </Box>
+                              );
+                            }
+                          }
+                        })()}
+                        {row.order_status === "2" && (
                           <Box>
-                            <Box>ลำดับคิวที่</Box>
-                            <Box>จำนวนคิวที่รอ</Box>
+                            <Box>คำสั่งซื้อนี้ถูกยกเลิก</Box>
+                            <Box>โดยเจ้าของร้าน</Box>
                           </Box>
                         )}
                       </StyledTableCell>

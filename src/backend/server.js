@@ -541,6 +541,188 @@ app.get("/store-name/:store_id", (req, res) => {
     }
   );
 });
+
+app.delete("/cancel-order/:order_id", (req, res) => {
+  let order_id = req.params.order_id;
+  db.query(`DELETE FROM orders WHERE order_id=${order_id}`, (err, result) => {
+    if (result) {
+      res.json({
+        status: "200",
+        message: "DELETE Order success",
+      });
+    } else {
+      console.log(err);
+      res.send(err.data);
+    }
+  });
+});
+
+app.post("/queue", (req, res) => {
+  let order_id = req.body.order_id;
+  let store_id = req.body.store_id;
+  let query = `SELECT COUNT(*) as q FROM orders WHERE store_id=${store_id} and order_status='1' and order_cookingstatus != '2' and order_id<${order_id}`;
+  db.query(query, (err, result) => {
+    if (result) {
+      console.log(result[0].q);
+      res.send(result[0]);
+    } else {
+      console.log(err);
+      res.send(err);
+    }
+  });
+});
+// page OrderOwner ################################################################################################
+
+app.post("/list-order-from-cust", authenticateToken, (req, res) => {
+  let mem_id = req.user.mem_id;
+  // console.log("mem_id =", mem_id);
+  db.beginTransaction((err) => {
+    if (err) {
+      res.json({
+        status: "400",
+        message: "Error starting transaction",
+      });
+    }
+    db.query(
+      `SELECT store_id FROM store where mem_id=${mem_id}`,
+      (err, result) => {
+        let store_id = result[0].store_id;
+        if (err) {
+          db.rollback(() => {
+            res.json({
+              status: "400",
+              message: "Error get store_id from store table",
+            });
+          });
+        }
+        let orderListSQL = `SELECT * FROM orders where store_id=${store_id}`;
+        db.query(orderListSQL, (err, result2) => {
+          if (err) {
+            db.rollback(() => {
+              res.json({
+                status: "400",
+                message: "Error get data from orders table",
+              });
+            });
+          }
+          db.commit((err) => {
+            if (err) {
+              db.rollback(() => {
+                res.json({
+                  status: "400",
+                  message: "Error committing transaction",
+                });
+              });
+            }
+            res.send(result2);
+            console.table(result2);
+          });
+        });
+      }
+    );
+  });
+});
+
+app.put("/update-order-status/:order_id", (req, res) => {
+  let order_id = req.params.order_id;
+  let query = `UPDATE orders SET order_status = "1" WHERE order_id=${order_id}`;
+  db.query(query, (err, result) => {
+    if (result) {
+      res.json({
+        status: "200",
+        message: "Success UPDATE order_status",
+      });
+    } else {
+      res.json({
+        status: "400",
+        message: "Error UPDATE order_status",
+      });
+    }
+  });
+});
+
+app.put("/owner-cancel-order/:order_id", (req, res) => {
+  let order_id = req.params.order_id;
+  let query = `UPDATE orders SET order_status = "2" WHERE order_id=${order_id}`;
+  db.query(query, (err, result) => {
+    if (result) {
+      res.json({
+        status: "200",
+        message: "Success UPDATE order_status",
+      });
+    } else {
+      res.json({
+        status: "400",
+        message: "Error UPDATE order_status",
+      });
+    }
+  });
+});
+// page OrderConfirm ################################################################################################
+app.get("/list-order-confirm", (req, res) => {
+  db.query("SELECT * FROM orders where order_status=1", (err, result) => {
+    if (result) {
+      res.send(result);
+      console.table(result);
+    } else {
+      res.json({
+        status: "400",
+        message: "Error SELECT order where order_status=1",
+      });
+    }
+  });
+});
+
+app.put("/start-cook/:order_id", (req, res) => {
+  let order_id = req.params.order_id;
+  let query = `UPDATE orders SET order_cookingstatus = "1" WHERE order_id=${order_id}`;
+  db.query(query, (err, result) => {
+    if (result) {
+      res.json({
+        status: "200",
+        message: "Success UPDATE order_cookingstatus",
+      });
+    } else {
+      res.json({
+        status: "400",
+        message: "Error UPDATE order_cookingstatus",
+      });
+    }
+  });
+});
+
+app.put("/end-cook/:order_id", (req, res) => {
+  let order_id = req.params.order_id;
+  let query = `UPDATE orders SET order_cookingstatus = "2" WHERE order_id=${order_id}`;
+  db.query(query, (err, result) => {
+    if (result) {
+      res.json({
+        status: "200",
+        message: "Success UPDATE order_cookingstatus",
+      });
+    } else {
+      res.json({
+        status: "400",
+        message: "Error UPDATE order_cookingstatus",
+      });
+    }
+  });
+});
+
+app.delete("/success-order/:order_id", (req, res) => {
+  let order_id = req.params.order_id;
+  db.query(`DELETE FROM orders WHERE order_id=${order_id}`, (err, result) => {
+    if (result) {
+      res.json({
+        status: "200",
+        message: "DELETE Order success",
+      });
+    } else {
+      console.log(err);
+      res.send(err.data);
+    }
+  });
+});
 // page stroe ################################################################################################
 
 const storage = multer.diskStorage({

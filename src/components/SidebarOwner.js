@@ -30,6 +30,7 @@ import axios from "axios";
 import Store from "./Store";
 import { Link } from "react-router-dom";
 import OrderOwner from "./OrderOwner";
+import OrderConfirm from "./OrderConfirm";
 
 const drawerWidth = 240;
 
@@ -309,7 +310,7 @@ export default function SidebarOwner(prop) {
           } else if (Focus === 2) {
             return <OrderOwner />;
           } else if (Focus === 3) {
-            return ;
+            return <OrderConfirm />;
           }
         })()}
       </Box>

@@ -44,7 +44,7 @@ const style = {
   p: 4,
 };
 
-export default function OrderOwner() {
+export default function OrderConfirm() {
   const [listOrder, setlistOrder] = useState([]);
   const [dataOnModal, setdataOnModal] = useState([]);
   const [showModal, setshowModal] = useState(false);
@@ -52,20 +52,15 @@ export default function OrderOwner() {
 
   useEffect(() => {
     try {
-      axios
-        .post("http://localhost:4000/list-order-from-cust")
-        .then((response) => {
-          setlistOrder(response.data);
-          // if (response.data.length === 0) {
-          //   localStorage.removeItem("order");
-          // }
-        });
+      axios.get("http://localhost:4000/list-order-confirm").then((response) => {
+        setlistOrder(response.data);
+      });
     } catch (err) {
       console.log(err);
     }
   }, []);
 
-  console.table(listOrder);
+  //   console.table(listOrder);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -91,24 +86,28 @@ export default function OrderOwner() {
       });
   };
 
-  const confirmOrder = async (order_id) => {
-    const text = `คุณต้องการยืนยันคำสั่งซื้อ หมายเลข${order_id}?`;
-    const confirmed = window.confirm(text);
-    if (confirmed) {
-      await axios
-        .put(`http://localhost:4000/update-order-status/${order_id}`)
-        .then((response) => {
-          window.location.reload()
-        });
-    }
+  const startCook = async (order_id) => {
+    await axios
+      .put(`http://localhost:4000/start-cook/${order_id}`)
+      .then((response) => {
+        window.location.reload();
+      });
   };
 
-  const cancelOrder = async (order_id) => {
-    const text = `คุณต้องการยกเลิกคำสั่งซื้อ หมายเลข${order_id}?`;
+  const endCook = async (order_id) => {
+    await axios
+      .put(`http://localhost:4000/end-cook/${order_id}`)
+      .then((response) => {
+        window.location.reload();
+      });
+  };
+
+  const successOrder = async (order_id) => {
+    const text = `คุณต้องการยืนยันการมารับอาหารของลูกค้า หมายเลขคำสั่งซื้อ ${order_id}?`;
     const confirmed = window.confirm(text);
     if (confirmed) {
       await axios
-        .put(`http://localhost:4000/owner-cancel-order/${order_id}`)
+        .delete(`http://localhost:4000/success-order/${order_id}`)
         .then((response) => {
           window.location.reload();
         });
@@ -137,52 +136,69 @@ export default function OrderOwner() {
               </TableHead>
               <TableBody>
                 {listOrder.map((row, index) => {
-                  if (row.order_status === "1" || row.order_status === "2") {
-                    return;
-                  } else {
-                    return (
-                      <StyledTableRow key={index}>
-                        <StyledTableCell component="th" scope="row">
-                          {row.order_id}
-                        </StyledTableCell>
-                        <StyledTableCell align="right">
-                          {row.order_price}
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          <Button
-                            variant="contained"
-                            color="success"
-                            onClick={() => seeMenu(row.order_id)}
-                          >
-                            รายละเอียดคำสั่งซื้อ
-                          </Button>
-                        </StyledTableCell>
-                        <StyledTableCell align="center" sx={{ width: "15%" }}>
-                          <Grid container rowGap={0.5}>
+                  return (
+                    <StyledTableRow key={index}>
+                      <StyledTableCell component="th" scope="row">
+                        {row.order_id}
+                      </StyledTableCell>
+                      <StyledTableCell align="right">
+                        {row.order_price}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        <Button
+                          variant="contained"
+                          color="success"
+                          onClick={() => seeMenu(row.order_id)}
+                        >
+                          รายละเอียดคำสั่งซื้อ
+                        </Button>
+                      </StyledTableCell>
+                      <StyledTableCell align="center" sx={{ width: "15%" }}>
+                        <Grid container rowGap={0.5}>
+                          {row.order_cookingstatus === "0" && (
                             <Grid item xs={12}>
                               <Button
                                 variant="contained"
-                                color="success"
-                                onClick={() => confirmOrder(row.order_id)}
+                                sx={{ color: "orange" }}
+                                onClick={() => startCook(row.order_id)}
                               >
-                                ยืนยันรับคำสั่งซื้อ
+                                กดเพื่อเริ่มทำ
                               </Button>
                             </Grid>
+                          )}
+                          {row.order_cookingstatus === "1" && (
                             <Grid item xs={12}>
                               <Button
                                 variant="contained"
-                                color="error"
-                                onClick={() => cancelOrder(row.order_id)}
+                                sx={{ color: "green" }}
+                                onClick={() => endCook(row.order_id)}
                               >
-                                ยกเลิกคำสั่งซื้อ
+                                กดเพื่อเสร็จสิ้น
                               </Button>
                             </Grid>
-                          </Grid>
-                        </StyledTableCell>
-                      </StyledTableRow>
-                    );
-                  }
+                          )}
+                          {row.order_cookingstatus === "2" && (
+                            <>
+                              <Grid item xs={12}>
+                                รอลูกค้ามารับอาหาร
+                              </Grid>
+                              <Grid item xs={12}>
+                                <Button
+                                  variant="contained"
+                                  sx={{ color: "wite" }}
+                                  onClick={() => successOrder(row.order_id)}
+                                >
+                                  ยืนยันลูกค้ามารับอาหารแล้ว
+                                </Button>
+                              </Grid>
+                            </>
+                          )}
+                        </Grid>
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  );
                 })}
+
                 {/* {listOrder.length === 0 && (
                   <Container>
                     <p>ไม่มีคำสั่งซื้อจากลูกค้า</p>
