@@ -118,6 +118,14 @@ export default function OrderCust() {
     }
   };
 
+  const delete_cancelOrder = async (order_id) => {
+    await axios
+      .delete(`http://localhost:4000/cancel-order/${order_id}`)
+      .then((response) => {
+        window.location.reload();
+      });
+  };
+
   const [Qorder, setQorder] = useState([]);
 
   useEffect(() => {
@@ -248,6 +256,13 @@ export default function OrderCust() {
                           <Box>
                             <Box>คำสั่งซื้อนี้ถูกยกเลิก</Box>
                             <Box>โดยเจ้าของร้าน</Box>
+                            <Button
+                              variant="contained"
+                              color="error"
+                              onClick={() => delete_cancelOrder(row.order_id)}
+                            >
+                              กดเพื่อลบรายการ
+                            </Button>
                           </Box>
                         )}
                       </StyledTableCell>

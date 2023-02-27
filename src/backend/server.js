@@ -659,18 +659,63 @@ app.put("/owner-cancel-order/:order_id", (req, res) => {
   });
 });
 // page OrderConfirm ################################################################################################
-app.get("/list-order-confirm", (req, res) => {
-  db.query("SELECT * FROM orders where order_status=1", (err, result) => {
-    if (result) {
-      res.send(result);
-      console.table(result);
-    } else {
+app.get("/list-order-confirm", authenticateToken, (req, res) => {
+  let mem_id = req.user.mem_id;
+  db.beginTransaction((err) => {
+    if (err) {
       res.json({
         status: "400",
-        message: "Error SELECT order where order_status=1",
+        message: "Error starting transaction",
       });
     }
+    db.query(
+      `SELECT store_id FROM store where mem_id=${mem_id}`,
+      (err, result) => {
+        // console.log(store_id);
+        if (err) {
+          db.rollback(() => {
+            res.json({
+              status: "400",
+              message: "Error get data from store table",
+            });
+          });
+        }
+        let store_id = result[0].store_id;
+        db.query(`SELECT * FROM orders where order_status=1 and store_id=${store_id}`,(err, result) => {
+          if (err) {
+            db.rollback(() => {
+              res.json({
+                status: "400",
+                message: "Error data order from orders table",
+              });
+            });
+          }
+           db.commit((err) => {
+             if (err) {
+               db.rollback(() => {
+                 res.json({
+                   status: "400",
+                   message: "Error committing transaction",
+                 });
+               });
+             }
+             res.send(result);
+           });
+        });
+      }
+    );
   });
+  // db.query("SELECT * FROM orders where order_status=1", (err, result) => {
+  //   if (result) {
+  //     res.send(result);
+  //     console.table(result);
+  //   } else {
+  //     res.json({
+  //       status: "400",
+  //       message: "Error SELECT order where order_status=1",
+  //     });
+  //   }
+  // });
 });
 
 app.put("/start-cook/:order_id", (req, res) => {
