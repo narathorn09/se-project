@@ -527,6 +527,20 @@ app.get("/menu-name/:menu_id", (req, res) => {
   );
 });
 
+app.get("/menu-filename/:menu_id", (req, res) => {
+  let menu_id = req.params.menu_id;
+  db.query(
+    `SELECT menu_photo FROM menu WHERE menu_id=${menu_id}`,
+    (err, result) => {
+      if (result) {
+        res.send(result);
+      } else {
+        res.send(err.data);
+      }
+    }
+  );
+});
+
 app.get("/store-name/:store_id", (req, res) => {
   let store_id = req.params.store_id;
   console.log("store_id =", store_id);
@@ -595,7 +609,7 @@ app.post("/list-order-from-cust", authenticateToken, (req, res) => {
             });
           });
         }
-        let orderListSQL = `SELECT * FROM orders where store_id=${store_id}`;
+        let orderListSQL = `SELECT * FROM orders where store_id=${store_id} and order_status= "0"`;
         db.query(orderListSQL, (err, result2) => {
           if (err) {
             db.rollback(() => {

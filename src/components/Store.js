@@ -136,12 +136,35 @@ const Store = () => {
   return (
     <>
       <Container sx={{ paddingTop: 5 }}>
-        <Typography sx={{ width: "100%", textAlign: "center" }} variant="h4">
-          ร้าน{nameStore}
-        </Typography>
+        <Box
+          sx={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            textAlign: "center",
+            color: "#EC6432",
+            bgcolor: "#1a1a1a",
+            padding: "10px",
+            borderRadius: "10px",
+            backgroundColor: "rgba(52, 52, 52, 0.05)",
+          }}
+        >
+          <Typography
+            sx={{
+              width: "100%",
+              textAlign: "center",
+              color: "#EC6432",
+              padding: "10px",
+            }}
+            variant="h4"
+          >
+            ร้าน{nameStore}
+          </Typography>
+        </Box>
         <Typography
           sx={{ width: "100%", textAlign: "center", marginTop: 2 }}
-          variant="h6"
+          variant="body1"
         >
           รายละเอียด : {detailStore}
         </Typography>
@@ -356,7 +379,17 @@ const Store = () => {
                   <Typography gutterBottom variant="h5" component="div">
                     {data.menu_name}
                   </Typography>
-                  <Typography variant="body2">{data.menu_price} บาท</Typography>
+                  <Typography
+                    variant="body1"
+                    sx={{ fontSize: "19px", fontWeight: "light" }}
+                  >
+                    {data.menu_price.toLocaleString("th-TH", {
+                      style: "currency",
+                      currency: "THB",
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0,
+                    })}
+                  </Typography>
                   <Box
                     className="buttons"
                     sx={{

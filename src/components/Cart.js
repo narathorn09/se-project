@@ -10,6 +10,7 @@ import Paper from "@mui/material/Paper";
 import { Button, Container, Grid, IconButton, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
+import { Box } from "@mui/system";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -90,6 +91,9 @@ export default function Cart() {
 
   return (
     <Container sx={{ paddingTop: 5 }}>
+      <Typography sx={{ width: "100%", textAlign: "center" , marginBottom: 5 }} variant="h4">
+       สินค้าในรถเข็น
+      </Typography>
       <Grid container columnGap={2}>
         <Grid item xs={8}>
           <TableContainer component={Paper}>

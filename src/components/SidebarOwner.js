@@ -20,7 +20,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
-// import Badge from "@mui/material/Badge";
+import Badge from "@mui/material/Badge";
 import StoreIcon from "@mui/icons-material/Store";
 import HourglassTopIcon from "@mui/icons-material/HourglassTop";
 import CardProfile from "./Profile";
@@ -99,34 +99,34 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
-// const StyledBadge = styled(Badge)(({ theme }) => ({
-//   "& .MuiBadge-badge": {
-//     backgroundColor: "#FF0000",
-//     color: "#FF0000",
-//     boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-//     "&::after": {
-//       position: "absolute",
-//       top: 0,
-//       left: 0,
-//       width: "100%",
-//       height: "100%",
-//       borderRadius: "50%",
-//       animation: "ripple 1.2s infinite ease-in-out",
-//       border: "1px solid currentColor",
-//       content: '""',
-//     },
-//   },
-//   "@keyframes ripple": {
-//     "0%": {
-//       transform: "scale(.8)",
-//       opacity: 1,
-//     },
-//     "100%": {
-//       transform: "scale(2.4)",
-//       opacity: 0,
-//     },
-//   },
-// }));
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  "& .MuiBadge-badge": {
+    backgroundColor: "#FF0000",
+    color: "#FF0000",
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    "&::after": {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      borderRadius: "50%",
+      animation: "ripple 1.2s infinite ease-in-out",
+      border: "1px solid currentColor",
+      content: '""',
+    },
+  },
+  "@keyframes ripple": {
+    "0%": {
+      transform: "scale(.8)",
+      opacity: 1,
+    },
+    "100%": {
+      transform: "scale(2.4)",
+      opacity: 0,
+    },
+  },
+}));
 
 export default function SidebarOwner(prop) {
   let navigate = useNavigate();
@@ -163,6 +163,9 @@ export default function SidebarOwner(prop) {
     setOpen(false);
   };
 
+  let order_fcust = localStorage.getItem("order_fcust");
+  let order_con = localStorage.getItem("order_con");
+  
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -180,25 +183,27 @@ export default function SidebarOwner(prop) {
           >
             <MenuIcon />
           </IconButton>
+          <img
+            style={{ clipPath: `circle(50%)` }}
+            component="img"
+            height="40"
+            src={require(`../logofo.png`)}
+            alt="logo"
+          />
           <Typography
             variant="h6"
             noWrap
             component="div"
             sx={{
-              flex: 100,
+              flex: 1,
               alignItems: "center",
               justifyContent: "end",
+              marginLeft: "20px",
             }}
           >
             ระบบจองคิวสั่งอาหาร : เจ้าของร้าน
           </Typography>
-          {/* <IconButton>
-            {theme.direction === "rtl" ? (
-              <ChevronRightIcon />
-            ) : (
-              <ChevronLeftIcon />
-            )}
-          </IconButton> */}
+
           <Box
             component={Button}
             color="inherit"
@@ -209,8 +214,8 @@ export default function SidebarOwner(prop) {
               navigate("/login");
             }}
           >
-            <Typography variant="button" sx={{ marginRight: 1 }}>
-              logout
+            <Typography variant="button" sx={{ flex: 1, marginRight: 1 }}>
+              ออกจากระบบ
             </Typography>
             <LogoutIcon />
           </Box>
@@ -233,7 +238,7 @@ export default function SidebarOwner(prop) {
             "ข้อมูลส่วนตัว",
             "หน้าแรก",
             "คำสั่งซื้อจากลูกค้า",
-            "รายการที่กำลังทำ",
+            "คำสั่งซื้อที่ยืนยันแล้ว",
           ].map((text, index) => (
             <Link
               key={text}
@@ -244,7 +249,7 @@ export default function SidebarOwner(prop) {
                   return "/owner/home";
                 } else if (text === "คำสั่งซื้อจากลูกค้า") {
                   return "/owner/order";
-                } else if (text === "รายการที่กำลังทำ") {
+                } else if (text === "คำสั่งซื้อที่ยืนยันแล้ว") {
                   return "/owner/cooking";
                 }
               })()}
@@ -273,11 +278,6 @@ export default function SidebarOwner(prop) {
                       color: Focus === index ? "#EC6432" : "black",
                     }}
                   >
-                    {/* <StyledBadge
-                      overlap="circular"
-                      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                      variant="dot"
-                    > */}
                     {(() => {
                       if (text === "ข้อมูลส่วนตัว") {
                         return <AccountCircleIcon />;
@@ -285,11 +285,32 @@ export default function SidebarOwner(prop) {
                         return <StoreIcon />;
                       } else if (text === "คำสั่งซื้อจากลูกค้า") {
                         return <LibraryBooksIcon />;
-                      } else if (text === "รายการที่กำลังทำ") {
+                      } else if (text === "คำสั่งซื้อที่ยืนยันแล้ว") {
                         return <HourglassTopIcon />;
                       }
                     })()}
-                    {/* </StyledBadge> แสดงสถานะแบบจุดสีแดง*/}
+                    {order_fcust === "have" &&
+                      text === "คำสั่งซื้อจากลูกค้า" && (
+                        <StyledBadge
+                          overlap="circular"
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "right",
+                          }}
+                          variant="dot"
+                        />
+                      )}
+                    {order_con === "have" &&
+                      text === "คำสั่งซื้อที่ยืนยันแล้ว" && (
+                        <StyledBadge
+                          overlap="circular"
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "right",
+                          }}
+                          variant="dot"
+                        />
+                      )}
                   </ListItemIcon>
                   <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
                 </ListItemButton>

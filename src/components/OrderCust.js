@@ -16,9 +16,10 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
+    fontSize: 16,
   },
   [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
+    fontSize: 16,
   },
 }));
 
@@ -37,7 +38,7 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: "50%",
+  width: "auto",
   height: "auto",
   bgcolor: "background.paper",
   borderRadius: "5px",
@@ -50,6 +51,7 @@ export default function OrderCust() {
   const [dataOnModal, setdataOnModal] = useState([]);
   const [showModal, setshowModal] = useState(false);
   const [menuNames, setMenuNames] = useState([]);
+  const [menuPhoto, setmenuPhoto] = useState([]);
   const [storeNames, setStoreNames] = useState([]);
   const [listupdates, setListupdates] = useState(true);
 
@@ -93,12 +95,29 @@ export default function OrderCust() {
     fetchData();
   }, [dataOnModal]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const filename = await Promise.all(
+        dataOnModal.map(async (data) => {
+          const response = await axios.get(
+            `http://localhost:4000/menu-filename/${data.menu_id}`
+          );
+          return response.data[0].menu_photo;
+        })
+      );
+      setmenuPhoto(filename);
+    };
+    fetchData();
+  }, [dataOnModal]);
+
   const seeMenu = async (order_id) => {
     await axios
       .get(`http://localhost:4000/orderdetail/${order_id}`)
       .then((response) => {
         setdataOnModal(response.data);
-        setshowModal(true);
+        setTimeout(() => {
+          setshowModal(true);
+        }, 500);
       });
   };
 
@@ -146,6 +165,12 @@ export default function OrderCust() {
 
   return (
     <Container sx={{ paddingTop: 5 }}>
+      <Typography
+        sx={{ width: "100%", textAlign: "center", marginBottom: 5 }}
+        variant="h4"
+      >
+        รายการสั่งซื้อ
+      </Typography>
       <Grid container columnGap={2}>
         <Grid item xs={12}>
           <TableContainer component={Paper}>
@@ -178,7 +203,12 @@ export default function OrderCust() {
                         {storeNames[index]}
                       </StyledTableCell>
                       <StyledTableCell align="right">
-                        {row.order_price}
+                        {row.order_price.toLocaleString("th-TH", {
+                          style: "currency",
+                          currency: "THB",
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 0,
+                        })}
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         {(() => {
@@ -218,7 +248,15 @@ export default function OrderCust() {
                       <StyledTableCell align="center">
                         <Button
                           variant="contained"
-                          color="success"
+                          sx={{
+                            bgcolor: "#48E8AB",
+                            color: "#1a1a1a",
+                            ":hover": {
+                              bgcolor: "#48E8AB",
+                              color: "#1a1a1a",
+                              transform: "scale(1.05)",
+                            },
+                          }}
                           onClick={() => seeMenu(row.order_id)}
                         >
                           ดูเมนูที่สั่ง
@@ -239,21 +277,62 @@ export default function OrderCust() {
                             if (row.order_cookingstatus === "2") {
                               return (
                                 <Box>
-                                  <Box>กรุณาไปรับอารหาร</Box>
+                                  <Box
+                                    sx={{
+                                      backgroundColor:
+                                        "rgba(125, 235, 71, 0.5)",
+                                      color: "#1a1a1a",
+                                      borderRadius: "2px",
+                                      fontSize: "18px",
+                                      padding: "10px",
+                                    }}
+                                  >
+                                    กรุณาไปรับอารหารคิวที่ {row.order_id}
+                                  </Box>
                                 </Box>
                               );
                             } else {
                               return (
                                 <Box>
-                                  <Box>ลำดับคิวที่ {row.order_id}</Box>
-                                  <Box>จำนวนคิวที่รอ {Qorder[index]}</Box>
+                                  <Box
+                                    sx={{
+                                      backgroundColor:
+                                        "rgba(245, 165, 71, 0.5)",
+                                      color: "#1a1a1a",
+                                      borderRadius: "2px",
+                                      fontSize: "18px",
+                                      padding: "10px",
+                                    }}
+                                  >
+                                    ลำดับคิวที่ : {row.order_id}
+                                  </Box>
+                                  <Box
+                                    sx={{
+                                      backgroundColor:
+                                        "rgba(245, 255, 71, 0.5)",
+                                      color: "#1a1a1a",
+                                      borderRadius: "2px",
+                                      fontSize: "18px",
+                                      padding: "10px",
+                                    }}
+                                  >
+                                    จำนวนคิวที่รอ : {Qorder[index]}
+                                  </Box>
                                 </Box>
                               );
                             }
                           }
                         })()}
                         {row.order_status === "2" && (
-                          <Box>
+                          <Box
+                            sx={{
+                              backgroundColor: "rgba(245, 75, 105, 0.5)",
+                              color: "#1a1a1a",
+                              borderRadius: "2px",
+                              fontSize: "18px",
+                              padding: "10px",
+                            }}
+                          >
                             <Box>คำสั่งซื้อนี้ถูกยกเลิก</Box>
                             <Box>โดยเจ้าของร้าน</Box>
                             <Button
@@ -269,26 +348,69 @@ export default function OrderCust() {
                     </StyledTableRow>
                   );
                 })}
+                {listOrder.length === 0 && (
+                  <Container>
+                    <p>ไม่มีรายการสั่งซื้อ</p>
+                  </Container>
+                )}
               </TableBody>
             </Table>
           </TableContainer>
         </Grid>
       </Grid>
-      <Modal open={showModal} onClose={closeModal}>
-        <Grid container sx={style}>
-          {dataOnModal.map((data, index) => {
-            return (
-              <Grid item xs={12} key={index}>
-                {index === 0 ? (
-                  <Typography>หมายเลขคำสั่งซื้อ : {data.order_id}</Typography>
-                ) : null}
-                {index + 1 + ")"} {menuNames[index]} {data.menu_amount}{" "}
-                {data.menu_type === "dish" ? "จาน" : "ห่อ"}
-              </Grid>
-            );
-          })}
-        </Grid>
-      </Modal>
+      {dataOnModal && showModal && (
+        <Modal
+          open={showModal}
+          onClose={closeModal}
+          sx={{ justifyContent: "center", alignContent: "center", flex: 1 }}
+        >
+          <TableContainer component={Paper}>
+            <Table>
+              <TableBody sx={style}>
+                {dataOnModal.map((data, index) => {
+                  return (
+                    <>
+                      {index === 0 && (
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            textAlign: "center",
+                            alignContent: "center",
+                            marginBottom: 2,
+                          }}
+                        >
+                          หมายเลขคำสั่งซื้อ : {data.order_id}
+                        </Typography>
+                      )}
+                      <StyledTableRow key={index}>
+                        <StyledTableCell></StyledTableCell>
+
+                        <StyledTableCell>{index + 1 + ")"}</StyledTableCell>
+
+                        <StyledTableCell>
+                          <img
+                            sx={{ padding: 1 }}
+                            component="img"
+                            width="50"
+                            height="50"
+                            src={require(`../../uploads/${menuPhoto[index]}`)}
+                            alt="food menu"
+                          />
+                        </StyledTableCell>
+                        <StyledTableCell>{menuNames[index]}</StyledTableCell>
+                        <StyledTableCell>{data.menu_amount}</StyledTableCell>
+                        <StyledTableCell>
+                          {data.menu_type === "dish" ? "จาน" : "ห่อ"}
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    </>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Modal>
+      )}
     </Container>
   );
 }

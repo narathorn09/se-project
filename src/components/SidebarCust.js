@@ -160,7 +160,7 @@ export default function SidebarCust(prop) {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-
+  
   let cart = JSON.parse(localStorage.getItem("cart"));
   let order = localStorage.getItem("order");
   return (
@@ -174,31 +174,32 @@ export default function SidebarCust(prop) {
             onClick={handleDrawerOpen}
             edge="start"
             sx={{
-              marginRight: 5,
+              marginRight: 3,
               ...(open && { display: "none" }),
             }}
           >
             <MenuIcon />
           </IconButton>
+          <img
+            style={{ clipPath: `circle(50%)` }}
+            component="img"
+            height="40"
+            src={require(`../logofo.png`)}
+            alt="logo"
+          />
           <Typography
             variant="h6"
             noWrap
             component="div"
             sx={{
-              flex: 100,
+              flex: 1,
               alignItems: "center",
               justifyContent: "end",
+              marginLeft: "20px",
             }}
           >
             ระบบจองคิวสั่งอาหาร : ลูกค้า
           </Typography>
-          {/* <IconButton>
-            {theme.direction === "rtl" ? (
-              <ChevronRightIcon />
-            ) : (
-              <ChevronLeftIcon />
-            )}
-          </IconButton> */}
           <Box
             component={Button}
             color="inherit"
@@ -209,14 +210,19 @@ export default function SidebarCust(prop) {
               navigate("/login");
             }}
           >
-            <Typography variant="button" sx={{ marginRight: 1 }}>
-              logout
+            <Typography
+              variant="button"
+              sx={{
+                flex: 1,
+                marginRight: 1,
+              }}
+            >
+              ออกจากระบบ
             </Typography>
             <LogoutIcon />
           </Box>
         </Toolbar>
       </AppBar>
-      {/* <Router> */}
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>

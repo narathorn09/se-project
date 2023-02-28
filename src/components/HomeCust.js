@@ -21,7 +21,9 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import IconButton from '@mui/material/IconButton';
 export default function HomeCust() {
   let navigate = useNavigate();
 
@@ -72,8 +74,8 @@ export default function HomeCust() {
     // console.log(newData);
     // setdataInCart(newData);
     addToLocalStorage(newData);
-    alert("เพิ่มไปยังรถเข็นสำเร็จ")
-    closeModal()
+    alert("เพิ่มไปยังรถเข็นสำเร็จ");
+    closeModal();
     // setidStore(1);
     // window.location.reload()
   };
@@ -161,32 +163,48 @@ export default function HomeCust() {
       }
     }
   }, [search, Checkbox_1, Checkbox_2]);
+  
+  if (!localStorage["cart"]) {
+    localStorage.setItem("cart", JSON.stringify([]));
+  }
+  let dataInCart = JSON.parse(localStorage.getItem("cart"));
 
   const selectStore = async (id) => {
-    const data = {
-      store_id: id,
-    };
+    let check = true;
+    if (dataInCart.length > 0) {
+      if (dataInCart[0].store_id !== id) {
+        const text = `คุณต้องยืนยันคำสั่งซื้อสินค้าในรถเข็นก่อน ถึงจะสามารถเลือกซื้อเมนูร้านอื่นได้`;
+        check = false;
+        alert(text);
+        return;
+      }
+    }
+    if (check) {
+      const data = {
+        store_id: id,
+      };
 
-    await axios
-      .post("http://localhost:4000/store-select", data)
-      .then((res) => {
-        // console.log(res.data);
-        setnameStore(res.data[0].store_name);
-        setdetailStore(res.data[0].store_details);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      await axios
+        .post("http://localhost:4000/store-select", data)
+        .then((res) => {
+          // console.log(res.data);
+          setnameStore(res.data[0].store_name);
+          setdetailStore(res.data[0].store_details);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
 
-    await axios
-      .post("http://localhost:4000/list-menu-store-select", data)
-      .then((res) => {
-        setlistMenu(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    setidStore(1);
+      await axios
+        .post("http://localhost:4000/list-menu-store-select", data)
+        .then((res) => {
+          setlistMenu(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      setidStore(1);
+    }
   };
 
   const selectMenu = (sid, mid, name, price, photo) => {
@@ -333,17 +351,37 @@ export default function HomeCust() {
           <Box>
             {/* window.location.reload() */}
             <Box component={Button} onClick={() => setidStore(0)}>
-              ย้อนกลับ
+              <ArrowBackIcon /> ย้อนกลับ
+            </Box>
+            <Box
+              sx={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                width: "100%",
+                textAlign: "center",
+                color: "#EC6432",
+                bgcolor: "#1a1a1a",
+                padding: "10px",
+                borderRadius: "10px",
+                backgroundColor: "rgba(52, 52, 52, 0.05)",
+              }}
+            >
+              <Typography
+                sx={{
+                  width: "100%",
+                  textAlign: "center",
+                  color: "#EC6432",
+                  padding: "10px",
+                }}
+                variant="h4"
+              >
+                ร้าน{nameStore}
+              </Typography>
             </Box>
             <Typography
-              sx={{ width: "100%", textAlign: "center" }}
-              variant="h4"
-            >
-              ร้าน{nameStore}
-            </Typography>
-            <Typography
               sx={{ width: "100%", textAlign: "center", marginTop: 2 }}
-              variant="h6"
+              variant="body1"
             >
               รายละเอียด : {detailStore}
             </Typography>
@@ -360,8 +398,8 @@ export default function HomeCust() {
                 <Grid key={data + index} item xs={2.9} maxWidth={100}>
                   <Card
                     sx={{
-                      "&:hover > .cardContent > .buttons": {
-                        visibility: "visible",
+                      "&:hover > .cardContent > .gridContainer >.buttons": {
+                        display: "flex",
                       },
                       ":hover": {
                         bgcolor: "#1a1a1a",
@@ -381,35 +419,44 @@ export default function HomeCust() {
                       <Typography gutterBottom variant="h5" component="div">
                         {data.menu_name}
                       </Typography>
-                      <Typography variant="body2">
-                        {data.menu_price} บาท
-                      </Typography>
-                      <Box
-                        className="buttons"
-                        sx={{
-                          marginTop: 2,
-                          display: "grid",
-                          columnGap: 1,
-                          visibility: "hidden",
-                        }}
-                      >
-                        <Button
-                          variant="contained"
-                          color="success"
-                          onClick={(e) =>
-                            selectMenu(
-                              data.store_id,
-                              data.menu_id,
-                              data.menu_name,
-                              data.menu_price,
-                              data.menu_photo,
-                              e
-                            )
-                          }
+                      <Grid container columnGap={9} className="gridContainer">
+                        <Grid item xs={5}>
+                          <Typography
+                            variant="body1"
+                            sx={{ fontSize: "19px", fontWeight: "light" }}
+                          >
+                            {data.menu_price.toLocaleString("th-TH", {
+                              style: "currency",
+                              currency: "THB",
+                              minimumFractionDigits: 0,
+                              maximumFractionDigits: 0,
+                            })}
+                          </Typography>
+                        </Grid>
+                        <Grid
+                          item
+                          xs={1}
+                          className="buttons"
+                          sx={{ display: "none" }}
                         >
-                          สั่งซื้อ
-                        </Button>
-                      </Box>
+                          <Button
+                            variant="contained"
+                            color="success"
+                            onClick={(e) =>
+                              selectMenu(
+                                data.store_id,
+                                data.menu_id,
+                                data.menu_name,
+                                data.menu_price,
+                                data.menu_photo,
+                                e
+                              )
+                            }
+                          >
+                            <AddShoppingCartIcon />
+                          </Button>
+                        </Grid>
+                      </Grid>
                     </CardContent>
                   </Card>
                 </Grid>
@@ -430,11 +477,24 @@ export default function HomeCust() {
                 />
               </Grid>
               <Grid item xs={6} sx={{ marginLeft: "5%" }}>
-                <Typography id="modal-modal-title" variant="h6" component="h2">
+                <Typography variant="h5" component="h2">
                   {dataOnModal.menu_name}
                 </Typography>
-                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                  {dataOnModal.menu_price} บาท
+                <Typography
+                  variant="h6"
+                  sx={{
+                    mt: 2,
+                    color: "#EC6432",
+                    fontSize: "20px",
+                    fontWeight: "light",
+                  }}
+                >
+                  {dataOnModal.menu_price.toLocaleString("th-TH", {
+                    style: "currency",
+                    currency: "THB",
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                  })}
                 </Typography>
                 <Typography variant="body" sx={{ mr: 2 }}>
                   จำนวน
@@ -497,7 +557,7 @@ export default function HomeCust() {
                     color="success"
                     onClick={() => addtoCart()}
                   >
-                    เพิ่มไปยังตะกร้า
+                    ยืนยัน
                   </Button>
                   <Button
                     variant="contained"
