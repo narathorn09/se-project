@@ -7,7 +7,6 @@ import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -18,6 +17,10 @@ import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useNavigate } from "react-router-dom";
 import { IconButton, InputAdornment } from "@mui/material";
+import PersonIcon from "@mui/icons-material/Person";
+import EmailIcon from "@mui/icons-material/Email";
+import PhoneIphoneIcon from "@mui/icons-material/PhoneIphone";
+import KeyIcon from "@mui/icons-material/Key";
 
 const RegisterCus = () => {
   let navigate = useNavigate();
@@ -38,11 +41,12 @@ const RegisterCus = () => {
   const [custLname, setCustLname] = useState("");
   const [custTel, setCustTel] = useState("");
   const [custEmail, setCustEmail] = useState("");
-  // const [errorEmail, setErrorEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
 
   const [valid_form, setValid_form] = useState(true);
   const [showpass, setShowpass] = useState(false);
   const [showpasscon, setShowpasscon] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
 
   const [showAlert, setShowAlert] = useState(false);
 
@@ -73,19 +77,6 @@ const RegisterCus = () => {
   };
 
   useEffect(() => {
-    // setMemUsername("");
-    // setMemPassword("");
-    // setCustName("");
-    // setCustLname("");
-    // setCustTel("");
-    // setCustEmail("");
-
-    // if (custEmail.trim() === ''.trim()) {
-    //   setErrorEmail(true);
-    // } else {
-    //   setErrorEmail(false);
-    // }
-
     setValid_form(() => {
       if (
         (memUsername &&
@@ -96,7 +87,8 @@ const RegisterCus = () => {
           custTel &&
           custEmail) !== "" &&
         memPassword === con_password &&
-        !usernameTaken
+        !usernameTaken &&
+        !passwordError
       ) {
         return false;
       } else {
@@ -112,12 +104,17 @@ const RegisterCus = () => {
     custTel,
     custEmail,
     usernameTaken,
+    passwordError,
   ]);
-
-  console.log(valid_form);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(custEmail)) {
+      setEmailError("กรุณากรอกที่อยู่อีเมลที่ถูกต้อง");
+      return;
+    }
 
     try {
       const Data = {
@@ -160,7 +157,7 @@ const RegisterCus = () => {
         }}
       >
         <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-          <LockOutlinedIcon />
+          <PersonIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
           สมัครสมาชิก : ลูกค้า
@@ -204,22 +201,45 @@ const RegisterCus = () => {
                 name="email"
                 autoComplete="email"
                 value={custEmail}
-                onChange={(e) => setCustEmail(e.target.value)}
-                // error={errorEmail !== ''}
-                // helperText={errorEmail}
+                onChange={(e) => {
+                  setCustEmail(e.target.value);
+                  setEmailError("");
+                }}
+                error={!!emailError}
+                helperText={emailError}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <EmailIcon />
+                    </InputAdornment>
+                  ),
+                }}
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
-                type="tel"
                 required
                 fullWidth
                 id="phone"
                 label="เบอร์มือถือ"
                 name="phone"
+                type="tel"
                 autoComplete="phone"
                 value={custTel}
-                onChange={(e) => setCustTel(e.target.value)}
+                onChange={(e) => {
+                  const input = e.target.value;
+                  const onlyNums = input.replace(/[^0-9]/g, "");
+                  if (onlyNums.length <= 10) {
+                    setCustTel(onlyNums);
+                  }
+                }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PhoneIphoneIcon />
+                    </InputAdornment>
+                  ),
+                }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -233,6 +253,11 @@ const RegisterCus = () => {
                 value={memUsername}
                 onChange={handleUsernameChange}
                 InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PersonIcon />
+                    </InputAdornment>
+                  ),
                   endAdornment: (
                     <InputAdornment position="end">
                       {memUsername && (
@@ -270,8 +295,21 @@ const RegisterCus = () => {
                 id="password"
                 autoComplete="new-password"
                 value={memPassword}
-                onChange={(e) => setMemPassword(e.target.value)}
+                onChange={(e) => {
+                  const password = e.target.value;
+                  if (password.length < 6) {
+                    setPasswordError(true);
+                  } else {
+                    setPasswordError(false);
+                  }
+                  setMemPassword(password);
+                }}
                 InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <KeyIcon />
+                    </InputAdornment>
+                  ),
                   endAdornment: (
                     <InputAdornment
                       position="end"
@@ -285,6 +323,16 @@ const RegisterCus = () => {
                     </InputAdornment>
                   ),
                 }}
+                inputProps={{
+                  maxLength: 10,
+                }}
+                error={passwordError}
+                FormHelperTextProps={{
+                  sx: { color: "red" },
+                }}
+                helperText={
+                  passwordError && "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร"
+                }
               />
             </Grid>
             <Grid item xs={12}>
@@ -299,6 +347,11 @@ const RegisterCus = () => {
                 value={con_password}
                 onChange={(e) => setCon_password(e.target.value)}
                 InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <KeyIcon />
+                    </InputAdornment>
+                  ),
                   endAdornment: (
                     <InputAdornment position="end">
                       {memPassword && con_password && (

@@ -22,17 +22,21 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import InputLabel from "@mui/material/InputLabel";
+import PersonIcon from "@mui/icons-material/Person";
+import EmailIcon from "@mui/icons-material/Email";
+import PhoneIphoneIcon from "@mui/icons-material/PhoneIphone";
+import KeyIcon from "@mui/icons-material/Key";
 
 const RegisterOnwer = () => {
   let navigate = useNavigate();
-useEffect(() => {
-  if (sessionStorage["token"] && localStorage["mem_type"] === "cust") {
-    navigate("/cust/home");
-  }
-  if (sessionStorage["token"] && localStorage["mem_type"] === "owner") {
-    navigate("/owner/home");
-  }
-}, [navigate]);
+  useEffect(() => {
+    if (sessionStorage["token"] && localStorage["mem_type"] === "cust") {
+      navigate("/cust/home");
+    }
+    if (sessionStorage["token"] && localStorage["mem_type"] === "owner") {
+      navigate("/owner/home");
+    }
+  }, [navigate]);
 
   const [memUsername, setMemUsername] = useState("");
   const [memPassword, setMemPassword] = useState("");
@@ -44,12 +48,13 @@ useEffect(() => {
   const [storeName, setStoreName] = useState("");
   const [storeDetails, setStoreDetails] = useState("");
   const [storeReligion, setStoreReligion] = useState("");
-  // const [errorEmail, setErrorEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
 
   const [valid_form, setValid_form] = useState(true);
   const [checkalldata, setcheckalldata] = useState(true);
   const [showpass, setShowpass] = useState(false);
   const [showpasscon, setShowpasscon] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
 
   const [showAlert, setShowAlert] = useState(false);
   const [nextSections, setNextSections] = useState(false);
@@ -80,20 +85,17 @@ useEffect(() => {
     checkUsername(e.target.value);
   };
 
+  const nextSec = () => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(ownerEmail)) {
+      setEmailError("กรุณากรอกที่อยู่อีเมลที่ถูกต้อง");
+      return;
+    } else {
+      setNextSections(true);
+    }
+  };
+
   useEffect(() => {
-    // setMemUsername("");
-    // setMemPassword("");
-    // setOwnerName("");
-    // setOwnerLname("");
-    // setOwnerTel("");
-    // setOwnerEmail("");
-
-    // if (ownerEmail.trim() === ''.trim()) {
-    //   setErrorEmail(true);
-    // } else {
-    //   setErrorEmail(false);
-    // }
-
     setValid_form(() => {
       if (
         (memUsername &&
@@ -104,7 +106,8 @@ useEffect(() => {
           ownerTel &&
           ownerEmail) !== "" &&
         memPassword === con_password &&
-        !usernameTaken
+        !usernameTaken &&
+        !passwordError
       ) {
         return false;
       } else {
@@ -120,6 +123,7 @@ useEffect(() => {
     ownerTel,
     ownerEmail,
     usernameTaken,
+    passwordError,
   ]);
 
   useEffect(() => {
@@ -130,11 +134,7 @@ useEffect(() => {
         return true;
       }
     });
-  }, [
-    storeName,
-    storeDetails,
-    storeReligion,
-  ]);
+  }, [storeName, storeDetails, storeReligion]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -184,7 +184,7 @@ useEffect(() => {
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
+            <PersonIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
             สมัครสมาชิก : เจ้าของร้าน
@@ -230,13 +230,24 @@ useEffect(() => {
                   name="email"
                   autoComplete="email"
                   value={ownerEmail}
-                  onChange={(e) => setOwnerEmail(e.target.value)}
-                  // error={errorEmail !== ''}
-                  // helperText={errorEmail}
+                  onChange={(e) => {
+                    setOwnerEmail(e.target.value);
+                    setEmailError("");
+                  }}
+                  error={!!emailError}
+                  helperText={emailError}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <EmailIcon />
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
+                  type="tel"
                   required
                   fullWidth
                   id="phone"
@@ -244,7 +255,20 @@ useEffect(() => {
                   name="phone"
                   autoComplete="phone"
                   value={ownerTel}
-                  onChange={(e) => setOwnerTel(e.target.value)}
+                  onChange={(e) => {
+                    const input = e.target.value;
+                    const onlyNums = input.replace(/[^0-9]/g, "");
+                    if (onlyNums.length <= 10) {
+                      setOwnerTel(onlyNums);
+                    }
+                  }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <PhoneIphoneIcon />
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -258,6 +282,11 @@ useEffect(() => {
                   value={memUsername}
                   onChange={handleUsernameChange}
                   InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <PersonIcon />
+                      </InputAdornment>
+                    ),
                     endAdornment: (
                       <InputAdornment position="end">
                         {memUsername && (
@@ -303,8 +332,21 @@ useEffect(() => {
                   id="password"
                   autoComplete="new-password"
                   value={memPassword}
-                  onChange={(e) => setMemPassword(e.target.value)}
+                  onChange={(e) => {
+                    const password = e.target.value;
+                    if (password.length < 6) {
+                      setPasswordError(true);
+                    } else {
+                      setPasswordError(false);
+                    }
+                    setMemPassword(password);
+                  }}
                   InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <KeyIcon />
+                      </InputAdornment>
+                    ),
                     endAdornment: (
                       <InputAdornment
                         position="end"
@@ -322,6 +364,16 @@ useEffect(() => {
                       </InputAdornment>
                     ),
                   }}
+                  inputProps={{
+                    maxLength: 10,
+                  }}
+                  error={passwordError}
+                  FormHelperTextProps={{
+                    sx: { color: "red" },
+                  }}
+                  helperText={
+                    passwordError && "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร"
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
@@ -336,6 +388,11 @@ useEffect(() => {
                   value={con_password}
                   onChange={(e) => setCon_password(e.target.value)}
                   InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <KeyIcon />
+                      </InputAdornment>
+                    ),
                     endAdornment: (
                       <InputAdornment position="end">
                         {memPassword && con_password && (
@@ -384,12 +441,11 @@ useEffect(() => {
             </Grid>
 
             <Button
-              // type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
               disabled={valid_form}
-              onClick={() => setNextSections(true)}
+              onClick={() => nextSec()}
             >
               ถัดไป
             </Button>
@@ -425,7 +481,7 @@ useEffect(() => {
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-              กรอกข้อมูลร้านค้า
+              ข้อมูลร้านค้า
             </Typography>
             <Box
               component="form"
@@ -450,6 +506,8 @@ useEffect(() => {
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
+                    multiline
+                    rows={4}
                     required
                     fullWidth
                     id="store_detail"
@@ -458,6 +516,11 @@ useEffect(() => {
                     autoComplete="store_detail"
                     value={storeDetails}
                     onChange={(e) => setStoreDetails(e.target.value)}
+                    inputProps={{
+                      component: Typography,
+                      variant: "body1",
+                      wrap: "hard",
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12}>

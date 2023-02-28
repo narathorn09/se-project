@@ -34,7 +34,7 @@ CREATE TABLE store (
     store_id int AUTO_INCREMENT,
     mem_id int,
     store_name varchar(50),
-    store_details varchar(100),
+    store_details varchar(255),
     store_religion varchar(2),
     PRIMARY KEY (store_id),
     FOREIGN KEY (mem_id) REFERENCES member(mem_id) ON UPDATE CASCADE ON DELETE CASCADE

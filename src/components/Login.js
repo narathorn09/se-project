@@ -7,22 +7,21 @@ import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { useNavigate } from "react-router-dom";
+import PersonIcon from "@mui/icons-material/Person";
+import InputAdornment from "@mui/material/InputAdornment";
+import KeyIcon from "@mui/icons-material/Key";
+import LockIcon from "@mui/icons-material/Lock";
 
 const tokensend = sessionStorage.getItem("token");
 axios.defaults.headers.common["Authorization"] = `Bearer ${tokensend}`;
 
 export default function Login() {
   let navigate = useNavigate();
-
-  // const [memType, setMemType] = useState("");
   const [memUsername, setMemUsername] = useState("");
   const [memPassword, setMemPassword] = useState("");
-  // const [usernameTaken, setUsernameTaken] = useState(false);
-  // const [validtoken, setValidToken] = useState(false);
 
   useEffect(() => {
     if (sessionStorage["token"] && localStorage["mem_type"] === "cust") {
@@ -88,7 +87,7 @@ export default function Login() {
   };
 
   return (
-    <>
+    <Box>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -100,9 +99,9 @@ export default function Login() {
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
+            <LockIcon />
           </Avatar>
-          <Typography variant="h5">หน้าเข้าสู่ระบบ</Typography>
+          <Typography variant="h5">เข้าสู่ระบบ</Typography>
           <Box
             component="form"
             onSubmit={handleSubmit}
@@ -120,6 +119,13 @@ export default function Login() {
               autoFocus
               value={memUsername}
               onChange={(e) => setMemUsername(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <PersonIcon />
+                  </InputAdornment>
+                ),
+              }}
             />
             <TextField
               margin="normal"
@@ -132,6 +138,13 @@ export default function Login() {
               autoComplete="current-password"
               value={memPassword}
               onChange={(e) => setMemPassword(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <KeyIcon />
+                  </InputAdornment>
+                ),
+              }}
             />
             <Button
               type="submit"
@@ -151,6 +164,6 @@ export default function Login() {
           </Box>
         </Box>
       </Container>
-    </>
+    </Box>
   );
 }
