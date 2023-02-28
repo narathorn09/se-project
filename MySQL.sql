@@ -13,6 +13,7 @@ CREATE TABLE customer (
     cust_Lname varchar(50),
     cust_tel varchar(10),
     cust_email varchar(50),
+    cust_photo varchar(50),
     PRIMARY KEY (cust_id),
     FOREIGN KEY (mem_id) REFERENCES member(mem_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
@@ -24,6 +25,7 @@ CREATE TABLE ownerstore (
     ower_Lname varchar(50),
     owner_tel varchar(10),
     owner_email varchar(50),
+    owner_photo varchar(50),
     PRIMARY KEY (owner_id),
     FOREIGN KEY (mem_id) REFERENCES member(mem_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
@@ -34,6 +36,7 @@ CREATE TABLE store (
     store_name varchar(20),
     store_details varchar(255),
     store_religion char(1),
+    store_photo varchar(50),
     PRIMARY KEY (store_id),
     FOREIGN KEY (mem_id) REFERENCES member(mem_id) ON UPDATE CASCADE ON DELETE CASCADE
 );

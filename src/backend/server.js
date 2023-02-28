@@ -77,13 +77,14 @@ app.post("/register-customer", (req, res) => {
         }
 
         const customerSql =
-          "INSERT INTO customer (mem_id, cust_name, cust_Lname, cust_tel, cust_email) VALUES (?, ?, ?, ?,?)";
+          "INSERT INTO customer (mem_id, cust_name, cust_Lname, cust_tel, cust_email, cust_photo) VALUES (?, ?, ?, ?,?,?)";
         const customerValues = [
           result.insertId,
           req.body.cust_name,
           req.body.cust_Lname,
           req.body.cust_tel,
           req.body.cust_email,
+          "profile default.jpg",
         ];
 
         db.query(customerSql, customerValues, (err, result) => {
@@ -143,13 +144,14 @@ app.post("/register-ownerstore", (req, res) => {
         }
 
         const ownerstoreSql =
-          "INSERT INTO ownerstore (mem_id, owner_name, ower_Lname, owner_tel, owner_email) VALUES (?, ?, ?, ?,?)";
+          "INSERT INTO ownerstore (mem_id, owner_name, ower_Lname, owner_tel, owner_email, owner_photo) VALUES (?, ?, ?, ?,?,?)";
         const ownerstoreValues = [
           result1.insertId,
           req.body.owner_name,
           req.body.ower_Lname,
           req.body.owner_tel,
           req.body.owner_email,
+          "profile default.jpg",
         ];
 
         db.query(ownerstoreSql, ownerstoreValues, (err, result2) => {
@@ -281,13 +283,56 @@ app.post("/profile", authenticateToken, (req, res) => {
   db.query(query1, (err, result) => {
     if (result) {
       res.send(result[0]);
-      // console.log(result[0]);
+      console.table(result[0]);
     } else {
       // console.log(err);
       res.send(err.data);
     }
   });
 });
+
+const storage_prfile = multer.diskStorage({
+  destination: (req, file, callBack) => {
+    callBack(null, "uploads_profile/"); // './public/images/' directory name where save the file
+  },
+  filename: (req, file, callBack) => {
+    callBack(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
+
+const upload_profile = multer({
+  storage: storage_prfile,
+});
+
+app.put(
+  "/update-profile",
+  authenticateToken,
+  upload_profile.single("profile"),
+  (req, res) => {
+   
+
+    const { fname, lname, tel, email, type, origin_filename } = req.body;
+     console.log(type);
+    let mem_id = req.user.mem_id;
+    let newPhto = req.file?.filename ? req.file?.filename : origin_filename;
+    let query1 =
+      type === "cust"
+        ? `UPDATE customer SET cust_name="${fname}", cust_Lname="${lname}", cust_tel="${tel}", cust_email="${email}", cust_photo="${newPhto}" where mem_id=${mem_id}`
+        : `UPDATE ownerstore SET owner_name="${fname}", ower_Lname="${lname}", owner_tel="${tel}", owner_email="${email}", owner_photo="${newPhto}" where mem_id=${mem_id}`;
+
+    db.query(query1, (err, result) => {
+      if (result) {
+        res.send(result);
+      } else {
+        res.send(err.data);
+      }
+    });
+  }
+);
+
 // page HomeCust ################################################################################################
 app.post("/store-all", (req, res) => {
   let store_name = req.body.store_name;
@@ -695,27 +740,30 @@ app.get("/list-order-confirm", authenticateToken, (req, res) => {
           });
         }
         let store_id = result[0].store_id;
-        db.query(`SELECT * FROM orders where order_status=1 and store_id=${store_id}`,(err, result) => {
-          if (err) {
-            db.rollback(() => {
-              res.json({
-                status: "400",
-                message: "Error data order from orders table",
+        db.query(
+          `SELECT * FROM orders where order_status=1 and store_id=${store_id}`,
+          (err, result) => {
+            if (err) {
+              db.rollback(() => {
+                res.json({
+                  status: "400",
+                  message: "Error data order from orders table",
+                });
               });
+            }
+            db.commit((err) => {
+              if (err) {
+                db.rollback(() => {
+                  res.json({
+                    status: "400",
+                    message: "Error committing transaction",
+                  });
+                });
+              }
+              res.send(result);
             });
           }
-           db.commit((err) => {
-             if (err) {
-               db.rollback(() => {
-                 res.json({
-                   status: "400",
-                   message: "Error committing transaction",
-                 });
-               });
-             }
-             res.send(result);
-           });
-        });
+        );
       }
     );
   });
@@ -972,6 +1020,46 @@ app.get("/list-menu", authenticateToken, (req, res) => {
     );
   });
 });
+
+const storage_store = multer.diskStorage({
+  destination: (req, file, callBack) => {
+    callBack(null, "uploads_profile/"); // './public/images/' directory name where save the file
+  },
+  filename: (req, file, callBack) => {
+    callBack(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
+
+const upload_store = multer({
+  storage: storage_store,
+});
+
+app.put(
+  "/update-profile",
+  authenticateToken,
+  upload_profile.single("profile"),
+  (req, res) => {
+    const { fname, lname, tel, email, type, origin_filename } = req.body;
+    console.log(type);
+    let mem_id = req.user.mem_id;
+    let newPhto = req.file?.filename ? req.file?.filename : origin_filename;
+    let query1 =
+      type === "cust"
+        ? `UPDATE customer SET cust_name="${fname}", cust_Lname="${lname}", cust_tel="${tel}", cust_email="${email}", cust_photo="${newPhto}" where mem_id=${mem_id}`
+        : `UPDATE ownerstore SET owner_name="${fname}", ower_Lname="${lname}", owner_tel="${tel}", owner_email="${email}", owner_photo="${newPhto}" where mem_id=${mem_id}`;
+
+    db.query(query1, (err, result) => {
+      if (result) {
+        res.send(result);
+      } else {
+        res.send(err.data);
+      }
+    });
+  }
+);
 
 app.listen(port, () => {
   console.log("CORS-enabled web server listening on port 4000");
