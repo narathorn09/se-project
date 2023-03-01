@@ -11,6 +11,7 @@ import { Button, Container, Grid, IconButton, Typography } from "@mui/material";
 import axios from "axios";
 import Modal from "@mui/material/Modal";
 import { Box } from "@mui/system";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -264,13 +265,21 @@ export default function OrderCust() {
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         {row.order_status === "0" && (
-                          <Button
-                            variant="contained"
-                            color="error"
-                            onClick={() => cancelOrder(row.order_id)}
-                          >
-                            ยกเลิกคำสั่งซื้อ
-                          </Button>
+                          <Box>
+                            <p>รอเจ้าของร้านยืนยันคำสั่งซื้อ</p>
+                            <Button
+                              variant="contained"
+                              color="error"
+                              onClick={() => cancelOrder(row.order_id)}
+                              sx={{
+                                ":hover": {
+                                  transform: "scale(1.05)",
+                                },
+                              }}
+                            >
+                              ยกเลิกคำสั่งซื้อ
+                            </Button>
+                          </Box>
                         )}
                         {(() => {
                           if (row.order_status === "1") {
@@ -299,7 +308,8 @@ export default function OrderCust() {
                                       backgroundColor:
                                         "rgba(245, 165, 71, 0.5)",
                                       color: "#1a1a1a",
-                                      borderRadius: "2px",
+                                      borderTopLeftRadius: "5px",
+                                      borderTopRightRadius: "5px",
                                       fontSize: "18px",
                                       padding: "10px",
                                     }}
@@ -311,7 +321,8 @@ export default function OrderCust() {
                                       backgroundColor:
                                         "rgba(245, 255, 71, 0.5)",
                                       color: "#1a1a1a",
-                                      borderRadius: "2px",
+                                      borderBottomLeftRadius: "5px",
+                                      borderBottomRightRadius: "5px",
                                       fontSize: "18px",
                                       padding: "10px",
                                     }}
@@ -328,20 +339,25 @@ export default function OrderCust() {
                             sx={{
                               backgroundColor: "rgba(245, 75, 105, 0.5)",
                               color: "#1a1a1a",
-                              borderRadius: "2px",
+                              borderRadius: "5px",
                               fontSize: "18px",
                               padding: "10px",
                             }}
                           >
                             <Box>คำสั่งซื้อนี้ถูกยกเลิก</Box>
                             <Box>โดยเจ้าของร้าน</Box>
-                            <Button
+                            <IconButton
                               variant="contained"
                               color="error"
                               onClick={() => delete_cancelOrder(row.order_id)}
+                              sx={{
+                                ":hover": {
+                                  transform: "scale(1.5)",
+                                },
+                              }}
                             >
-                              กดเพื่อลบรายการ
-                            </Button>
+                              <DeleteForeverIcon />
+                            </IconButton>
                           </Box>
                         )}
                       </StyledTableCell>

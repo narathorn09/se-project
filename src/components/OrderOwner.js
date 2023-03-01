@@ -202,8 +202,13 @@ export default function OrderOwner() {
                                 variant="contained"
                                 color="success"
                                 onClick={() => confirmOrder(row.order_id)}
+                                sx={{
+                                  ":hover": {
+                                    transform: "scale(1.05)",
+                                  },
+                                }}
                               >
-                                ยืนยันรับคำสั่งซื้อ
+                                ยืนยันคำสั่งซื้อ
                               </Button>
                             </Grid>
                             <Grid item xs={12}>
@@ -211,6 +216,12 @@ export default function OrderOwner() {
                                 variant="contained"
                                 color="error"
                                 onClick={() => cancelOrder(row.order_id)}
+                                sx={{
+                                  ":hover": {
+                                    transform: "scale(1.05)",
+                                  },
+                                  marginTop: 2
+                                }}
                               >
                                 ยกเลิกคำสั่งซื้อ
                               </Button>

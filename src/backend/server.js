@@ -165,12 +165,13 @@ app.post("/register-ownerstore", (req, res) => {
           }
           // const mem_forkey_store = result
           const storeSql =
-            "INSERT INTO store (mem_id, store_name, store_details, store_religion) VALUES (?, ?, ?, ?)";
+            "INSERT INTO store (mem_id, store_name, store_details, store_religion, store_photo) VALUES (?, ?, ?, ?, ?)";
           const storeValues = [
             result1.insertId,
             req.body.store_name,
             req.body.store_details,
             req.body.store_religion,
+            "store default.png",
           ];
 
           db.query(storeSql, storeValues, (err, result) => {
@@ -312,10 +313,8 @@ app.put(
   authenticateToken,
   upload_profile.single("profile"),
   (req, res) => {
-   
-
     const { fname, lname, tel, email, type, origin_filename } = req.body;
-     console.log(type);
+    console.log(type);
     let mem_id = req.user.mem_id;
     let newPhto = req.file?.filename ? req.file?.filename : origin_filename;
     let query1 =
@@ -1023,7 +1022,7 @@ app.get("/list-menu", authenticateToken, (req, res) => {
 
 const storage_store = multer.diskStorage({
   destination: (req, file, callBack) => {
-    callBack(null, "uploads_profile/"); // './public/images/' directory name where save the file
+    callBack(null, "uploads_store/"); // './public/images/' directory name where save the file
   },
   filename: (req, file, callBack) => {
     callBack(
@@ -1037,29 +1036,24 @@ const upload_store = multer({
   storage: storage_store,
 });
 
-app.put(
-  "/update-profile",
-  authenticateToken,
-  upload_profile.single("profile"),
-  (req, res) => {
-    const { fname, lname, tel, email, type, origin_filename } = req.body;
-    console.log(type);
-    let mem_id = req.user.mem_id;
-    let newPhto = req.file?.filename ? req.file?.filename : origin_filename;
-    let query1 =
-      type === "cust"
-        ? `UPDATE customer SET cust_name="${fname}", cust_Lname="${lname}", cust_tel="${tel}", cust_email="${email}", cust_photo="${newPhto}" where mem_id=${mem_id}`
-        : `UPDATE ownerstore SET owner_name="${fname}", ower_Lname="${lname}", owner_tel="${tel}", owner_email="${email}", owner_photo="${newPhto}" where mem_id=${mem_id}`;
-
-    db.query(query1, (err, result) => {
-      if (result) {
-        res.send(result);
-      } else {
-        res.send(err.data);
-      }
-    });
-  }
-);
+app.put("/update-store", upload_store.single("store"), (req, res) => {
+  const {
+    store_id,
+    store_name,
+    store_details,
+    store_religion,
+    origin_filename,
+  } = req.body;
+  let newPhoto = req.file?.filename ? req.file?.filename : origin_filename;
+  let query1 = `UPDATE store SET store_name="${store_name}", store_details="${store_details}" , store_photo="${newPhoto}" ,store_religion="${store_religion}" where store_id=${store_id}`;
+  db.query(query1, (err, result) => {
+    if (result) {
+      res.send(result);
+    } else {
+      res.send(err.data);
+    }
+  });
+});
 
 app.listen(port, () => {
   console.log("CORS-enabled web server listening on port 4000");

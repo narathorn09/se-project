@@ -91,8 +91,11 @@ export default function Cart() {
 
   return (
     <Container sx={{ paddingTop: 5 }}>
-      <Typography sx={{ width: "100%", textAlign: "center" , marginBottom: 5 }} variant="h4">
-       สินค้าในรถเข็น
+      <Typography
+        sx={{ width: "100%", textAlign: "center", marginBottom: 5 }}
+        variant="h4"
+      >
+        สินค้าในรถเข็น
       </Typography>
       <Grid container columnGap={2}>
         <Grid item xs={8}>
@@ -185,13 +188,18 @@ export default function Cart() {
                       </Grid>
                       <Grid item xs={12}>
                         <Button
-                          sx={{ width: "100%" }}
+                          sx={{
+                            width: "100%",
+                            ":hover": {
+                              transform: "scale(1.05)",
+                            },
+                          }}
                           variant="contained"
                           color="success"
                           onClick={() => OrderConfirm()}
                           disabled={totalPrice === 0 ? true : false}
                         >
-                          ยินยันคำสั่งซื้อ
+                          ยืนยันคำสั่งซื้อ
                         </Button>
                       </Grid>
                     </Grid>

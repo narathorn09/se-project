@@ -222,7 +222,12 @@ export default function OrderConfirm() {
                             <Grid item xs={12}>
                               <Button
                                 variant="contained"
-                                sx={{ color: "#FF8E0D" }}
+                                sx={{
+                                  color: "#FF8E0D",
+                                  ":hover": {
+                                    transform: "scale(1.05)",
+                                  },
+                                }}
                                 onClick={() => startCook(row.order_id)}
                               >
                                 กดเพื่อเริ่มทำ
@@ -233,7 +238,12 @@ export default function OrderConfirm() {
                             <Grid item xs={12}>
                               <Button
                                 variant="contained"
-                                sx={{ color: "#4AFF54" }}
+                                sx={{
+                                  color: "#4AFF54",
+                                  ":hover": {
+                                    transform: "scale(1.05)",
+                                  },
+                                }}
                                 onClick={() => endCook(row.order_id)}
                               >
                                 กดเพื่อเสร็จสิ้น
@@ -248,7 +258,12 @@ export default function OrderConfirm() {
                               <Grid item xs={12}>
                                 <Button
                                   variant="contained"
-                                  sx={{ color: "#38EEF0" }}
+                                  sx={{
+                                    color: "#38EEF0",
+                                    ":hover": {
+                                      transform: "scale(1.05)",
+                                    },
+                                  }}
                                   onClick={() => successOrder(row.order_id)}
                                 >
                                   ยืนยันการมารับอาหาร

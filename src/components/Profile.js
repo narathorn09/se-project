@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import axios from "axios";
 import { Button, TextField } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 
 export default function CardProfile() {
   const [member, setMember] = useState({});
@@ -115,7 +116,15 @@ export default function CardProfile() {
 
   return (
     <Container sx={{ paddingTop: 5 }}>
-      <Box sx={{ width: "100%", height: "100%", boxShadow: 3, padding: 5 }}>
+      <Box
+        sx={{
+          width: "100%",
+          height: "100%",
+          boxShadow: 3,
+          padding: 5,
+          paddingBottom: 10,
+        }}
+      >
         {!editProfile && (
           <Grid
             container
@@ -123,6 +132,27 @@ export default function CardProfile() {
             justifyContent="space-around"
             alignItems="center"
           >
+            <Grid
+              item
+              xs={12}
+              sx={{ display: "flex", justifyContent: "flex-end" }}
+            >
+              <Box
+                sx={{
+                  ":hover": {
+                    bgcolor: "#1a1a1a",
+                    color: "#EC6432",
+                    transform: "scale(1.05)",
+                  },
+                  marginTop: 1,
+                }}
+                component={Button}
+                onClick={() => buttonEdit()}
+              >
+                <EditIcon sx={{ fontSize: 20, marginRight: 1 }} />
+                แก้ไขข้อมูลส่วนตัว
+              </Box>
+            </Grid>
             {delayshowphoto && (
               <Grid item xs={1}>
                 <Avatar
@@ -136,26 +166,28 @@ export default function CardProfile() {
               </Grid>
             )}
             <Grid item xs={5}>
-              <Typography variant="h4">
+              <Typography variant="h5" sx={{ fontSize: 30, marginBottom: 2 }}>
                 ประเภทสมาชิก : {type === "cust" ? "ลูกค้า" : "เจ้าของร้าน"}
-                <Button
-                  sx={{ ml: 4 }}
-                  color="success"
-                  onClick={() => buttonEdit()}
-                >
-                  แก้ไขข้อมูล
-                </Button>
               </Typography>
-              <Typography variant="h11">
+              <Typography variant="body1" sx={{ fontSize: 20 }}>
                 ชื่อ-นามสกุล : {datamem.fname} {datamem.lname}
               </Typography>
-              <Typography>Email : {datamem.email}</Typography>
-              <Typography>เบอร์มือถือ : {datamem.tel}</Typography>
+              <Typography variant="body1" sx={{ fontSize: 20 }}>
+                Email : {datamem.email}
+              </Typography>
+              <Typography variant="body1" sx={{ fontSize: 20 }}>
+                เบอร์มือถือ : {datamem.tel}
+              </Typography>
             </Grid>
           </Grid>
         )}
         {editProfile && (
           <Grid container columnGap={2} rowGap={2}>
+            <Grid item xs={12}>
+              <Typography variant="h5" sx={{ fontSize: 30, marginBottom:2, textAlign: "center" }}>
+                แก้ไขข้อมูลส่วนตัว
+              </Typography>
+            </Grid>
             <Grid item xs={5.9}>
               <TextField
                 type="text"
@@ -206,7 +238,6 @@ export default function CardProfile() {
             </Grid>
             <Grid item xs={12}>
               <TextField
-                label="รูปโปรไฟล์"
                 type="file"
                 name="file"
                 fullWidth
@@ -244,7 +275,7 @@ export default function CardProfile() {
                 color="error"
                 sx={{ marginLeft: 1 }}
                 onClick={() => {
-                  setEditProfile(false)
+                  setEditProfile(false);
                   setShowphoto(null);
                 }}
               >

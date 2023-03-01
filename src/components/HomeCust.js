@@ -23,7 +23,7 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import IconButton from '@mui/material/IconButton';
+import IconButton from "@mui/material/IconButton";
 export default function HomeCust() {
   let navigate = useNavigate();
 
@@ -109,61 +109,66 @@ export default function HomeCust() {
   // console.log(dataInCart);
 
   useEffect(() => {
-    //เลือก Checkbox ทั้งสองช่องหรือ ไม่ได้เลือกทั้งสอง
-    if (
-      (Checkbox_1 && Checkbox_2) === true ||
-      (Checkbox_1 && Checkbox_2) === false
-    ) {
-      try {
-        const data = {
-          store_name: search,
-        };
-        // console.log(data);
-        axios.post("http://localhost:4000/store-all", data).then((response) => {
-          setAlldata(response.data);
-        });
-      } catch (error) {
-        console.log(error);
+    const fetchData = async () => {
+      //เลือก Checkbox ทั้งสองช่องหรือ ไม่ได้เลือกทั้งสอง
+      if (
+        (Checkbox_1 && Checkbox_2) === true ||
+        (Checkbox_1 && Checkbox_2) === false
+      ) {
+        try {
+          const data = {
+            store_name: search,
+          };
+          // console.log(data);
+          await axios
+            .post("http://localhost:4000/store-all", data)
+            .then((response) => {
+              setAlldata(response.data);
+            });
+        } catch (error) {
+          console.log(error);
+        }
       }
-    }
 
-    //เลือก Checkbox แรกที่เป็นศาสนาพุทธ จะให้ store_religion: "0"
-    if (Checkbox_1 === true && Checkbox_2 === false) {
-      try {
-        const data = {
-          store_name: search,
-          store_religion: "0",
-        };
-        // console.log(data);
-        axios
-          .post("http://localhost:4000/store-search", data)
-          .then((response) => {
-            setAlldata(response.data);
-          });
-      } catch (error) {
-        console.log(error);
+      //เลือก Checkbox แรกที่เป็นศาสนาพุทธ จะให้ store_religion: "0"
+      if (Checkbox_1 === true && Checkbox_2 === false) {
+        try {
+          const data = {
+            store_name: search,
+            store_religion: "0",
+          };
+          // console.log(data);
+          await axios
+            .post("http://localhost:4000/store-search", data)
+            .then((response) => {
+              setAlldata(response.data);
+            });
+        } catch (error) {
+          console.log(error);
+        }
       }
-    }
 
-    //เลือก Checkbox ที่สองที่เป็นศาสนาอิสลาม จะให้ store_religion: "1"
-    if (Checkbox_1 === false && Checkbox_2 === true) {
-      try {
-        const data = {
-          store_name: search,
-          store_religion: "1",
-        };
-        // console.log(data);
-        axios
-          .post("http://localhost:4000/store-search", data)
-          .then((response) => {
-            setAlldata(response.data);
-          });
-      } catch (error) {
-        console.log(error);
+      //เลือก Checkbox ที่สองที่เป็นศาสนาอิสลาม จะให้ store_religion: "1"
+      if (Checkbox_1 === false && Checkbox_2 === true) {
+        try {
+          const data = {
+            store_name: search,
+            store_religion: "1",
+          };
+          // console.log(data);
+          await axios
+            .post("http://localhost:4000/store-search", data)
+            .then((response) => {
+              setAlldata(response.data);
+            });
+        } catch (error) {
+          console.log(error);
+        }
       }
-    }
+    };
+    fetchData();
   }, [search, Checkbox_1, Checkbox_2]);
-  
+
   if (!localStorage["cart"]) {
     localStorage.setItem("cart", JSON.stringify([]));
   }
@@ -314,7 +319,7 @@ export default function HomeCust() {
                                 // maxWidth: { xs: 350, md: 250 },
                               }}
                               alt="The house from the offer."
-                              src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&w=350&dpr=2"
+                              src={require(`../../uploads_store/${data.store_photo}`)}
                             />
                           </Grid>
                           <Grid
@@ -556,6 +561,11 @@ export default function HomeCust() {
                     variant="contained"
                     color="success"
                     onClick={() => addtoCart()}
+                    sx={{
+                      ":hover": {
+                        transform: "scale(1.05)",
+                      },
+                    }}
                   >
                     ยืนยัน
                   </Button>
@@ -563,6 +573,11 @@ export default function HomeCust() {
                     variant="contained"
                     color="error"
                     onClick={() => closeModal()}
+                    sx={{
+                      ":hover": {
+                        transform: "scale(1.05)",
+                      },
+                    }}
                   >
                     ยกเลิก
                   </Button>

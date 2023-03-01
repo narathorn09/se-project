@@ -524,16 +524,6 @@ const RegisterOnwer = () => {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  {/* <TextField
-                    required
-                    fullWidth
-                    id="username"
-                    label="ชื่อผู้ใช้"
-                    name="username"
-                    autoComplete="username"
-                    value={storeReligion}
-                    onChange={(e) => setStoreReligion(e.target.value)}
-                  > */}
                   <FormControl fullWidth>
                     <InputLabel id="religion">ศาสนา</InputLabel>
                     <Select
@@ -547,7 +537,6 @@ const RegisterOnwer = () => {
                       <MenuItem value={"1"}>อิสลาม</MenuItem>
                     </Select>
                   </FormControl>
-                  {/* </TextField> */}
                 </Grid>
               </Grid>
 
